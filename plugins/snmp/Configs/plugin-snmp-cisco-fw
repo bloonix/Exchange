@@ -1,0 +1,1015 @@
+plugin {
+    id 10008
+    plugin SNMP.Cisco.Fw
+    command check-snmp-cisco-fw
+    datatype statistic
+    category System,SNMP
+    netaccess yes
+    prefer localhost
+    abstract Cisco Firewall check
+    description Monitor the firewall of a Cisco Router.
+}
+
+statistic {
+    statkey GCNumAttempted
+    alias GCNumAttempted
+    datatype float
+    units default
+    description Number of connections which are attempted to be set up.
+}
+
+statistic {
+    statkey GCNumSetupsAborted
+    alias GCNumSetupsAborted
+    datatype float
+    units default
+    description Number of connection setup attempts that were aborted.
+}
+
+statistic {
+    statkey GCNumPolicyDeclined
+    alias GCNumPolicyDeclined
+    datatype float
+    units default
+    description Number of connection setup attempts that were declined due to security reasons.
+}
+
+statistic {
+    statkey GCNumResDeclined
+    alias GCNumResDeclined
+    datatype float
+    units default
+    description Number of connection setup attempts that were declined du to non-availability of required resources.
+}
+
+statistic {
+    statkey GCNumHalfOpen
+    alias GCNumHalfOpen
+    datatype bigint
+    units default
+    description Connections which are in the process of being setup.
+}
+
+statistic {
+    statkey GCNumActive
+    alias GCNumActive
+    datatype bigint
+    units default
+    description Number of connections which are currently active.
+}
+
+statistic {
+    statkey GCNumExpired
+    alias GCNumExpired
+    datatype float
+    units default
+    description Connections which were active but which were since normally terminated.
+}
+
+statistic {
+    statkey GCNumAborted
+    alias GCNumAborted
+    datatype float
+    units default
+    description Connections which were active but which were aborted due to reasons of policy or resource rationing.
+}
+
+statistic {
+    statkey GCNumEmbryonic
+    alias GCNumEmbryonic
+    datatype bigint
+    units default
+    description Embryonic application layer connections.
+}
+
+statistic {
+    statkey GCSetupRate1
+    alias GCSetupRate1
+    datatype bigint
+    units default
+    description Averaged number of connections establishing per second over the last minute.
+}
+
+statistic {
+    statkey GCSetupRate5
+    alias GCSetupRate5
+    datatype bigint
+    units default
+    description Averaged number of connections establishing per second over the last 5 minute.
+}
+
+statistic {
+    statkey GCNumRemoteAccess
+    alias GCNumRemoteAccess
+    datatype bigint
+    units default
+    description Active connections which correspond to remote access applications(PPP, PPTP, L2TP, IPSEC).
+}
+
+statistic {
+    statkey ICMP_NumAttempted
+    alias ICMP_NumAttempted
+    datatype float
+    units default
+    description Number of connections which are attempted to be set up.
+}
+
+statistic {
+    statkey ICMP_NumSetupsAborted
+    alias ICMP_NumSetupsAborted
+    datatype float
+    units default
+    description Number of connection setup attempts that were aborted.
+}
+
+statistic {
+    statkey ICMP_NumPolicyDeclined
+    alias ICMP_NumPolicyDeclined
+    datatype float
+    units default
+    description Number of connection setup attempts that were declined due to security reasons.
+}
+
+statistic {
+    statkey ICMP_NumResDeclined
+    alias ICMP_NumResDeclined
+    datatype float
+    units default
+    description Number of connection setup attempts that were declined du to non-availability of required resources.
+}
+
+statistic {
+    statkey ICMP_NumHalfOpen
+    alias ICMP_NumHalfOpen
+    datatype bigint
+    units default
+    description Connections which are in the process of being setup.
+}
+
+statistic {
+    statkey ICMP_NumActive
+    alias ICMP_NumActive
+    datatype bigint
+    units default
+    description Number of connections which are currently active.
+}
+
+statistic {
+    statkey ICMP_NumExpired
+    alias ICMP_NumExpired
+    datatype float
+    units default
+    description Connections which were active but which were since normally terminated.
+}
+
+statistic {
+    statkey ICMP_NumAborted
+    alias ICMP_NumAborted
+    datatype float
+    units default
+    description Connections which were active but which were aborted due to reasons of policy or resource rationing.
+}
+
+statistic {
+    statkey ICMP_SetupRate1
+    alias ICMP_SetupRate1
+    datatype bigint
+    units default
+    description Averaged number of connections establishing per second over the last minute.
+}
+
+statistic {
+    statkey ICMP_SetupRate5
+    alias ICMP_SetupRate5
+    datatype bigint
+    units default
+    description Averaged number of connections establishing per second over the last 5 minute.
+}
+
+statistic {
+    statkey TCP_NumAttempted
+    alias TCP_NumAttempted
+    datatype float
+    units default
+    description Number of connections which are attempted to be set up.
+}
+
+statistic {
+    statkey TCP_NumSetupsAborted
+    alias TCP_NumSetupsAborted
+    datatype float
+    units default
+    description Number of connection setup attempts that were aborted.
+}
+
+statistic {
+    statkey TCP_NumPolicyDeclined
+    alias TCP_NumPolicyDeclined
+    datatype float
+    units default
+    description Number of connection setup attempts that were declined due to security reasons.
+}
+
+statistic {
+    statkey TCP_NumResDeclined
+    alias TCP_NumResDeclined
+    datatype float
+    units default
+    description Number of connection setup attempts that were declined du to non-availability of required resources.
+}
+
+statistic {
+    statkey TCP_NumHalfOpen
+    alias TCP_NumHalfOpen
+    datatype bigint
+    units default
+    description Connections which are in the process of being setup.
+}
+
+statistic {
+    statkey TCP_NumActive
+    alias TCP_NumActive
+    datatype bigint
+    units default
+    description Number of connections which are currently active.
+}
+
+statistic {
+    statkey TCP_NumExpired
+    alias TCP_NumExpired
+    datatype float
+    units default
+    description Connections which were active but which were since normally terminated.
+}
+
+statistic {
+    statkey TCP_NumAborted
+    alias TCP_NumAborted
+    datatype float
+    units default
+    description Connections which were active but which were aborted due to reasons of policy or resource rationing.
+}
+
+statistic {
+    statkey TCP_SetupRate1
+    alias TCP_SetupRate1
+    datatype bigint
+    units default
+    description Averaged number of connections establishing per second over the last minute.
+}
+
+statistic {
+    statkey TCP_SetupRate5
+    alias TCP_SetupRate5
+    datatype bigint
+    units default
+    description Averaged number of connections establishing per second over the last 5 minute.
+}
+
+statistic {
+    statkey UDP_NumAttempted
+    alias UDP_NumAttempted
+    datatype float
+    units default
+    description Number of connections which are attempted to be set up.
+}
+
+statistic {
+    statkey UDP_NumSetupsAborted
+    alias UDP_NumSetupsAborted
+    datatype float
+    units default
+    description Number of connection setup attempts that were aborted.
+}
+
+statistic {
+    statkey UDP_NumPolicyDeclined
+    alias UDP_NumPolicyDeclined
+    datatype float
+    units default
+    description Number of connection setup attempts that were declined due to security reasons.
+}
+
+statistic {
+    statkey UDP_NumResDeclined
+    alias UDP_NumResDeclined
+    datatype float
+    units default
+    description Number of connection setup attempts that were declined du to non-availability of required resources.
+}
+
+statistic {
+    statkey UDP_NumHalfOpen
+    alias UDP_NumHalfOpen
+    datatype bigint
+    units default
+    description Connections which are in the process of being setup.
+}
+
+statistic {
+    statkey UDP_NumActive
+    alias UDP_NumActive
+    datatype bigint
+    units default
+    description Number of connections which are currently active.
+}
+
+statistic {
+    statkey UDP_NumExpired
+    alias UDP_NumExpired
+    datatype float
+    units default
+    description Connections which were active but which were since normally terminated.
+}
+
+statistic {
+    statkey UDP_NumAborted
+    alias UDP_NumAborted
+    datatype float
+    units default
+    description Connections which were active but which were aborted due to reasons of policy or resource rationing.
+}
+
+statistic {
+    statkey UDP_SetupRate1
+    alias UDP_SetupRate1
+    datatype bigint
+    units default
+    description Averaged number of connections establishing per second over the last minute.
+}
+
+statistic {
+    statkey UDP_SetupRate5
+    alias UDP_SetupRate5
+    datatype bigint
+    units default
+    description Averaged number of connections establishing per second over the last 5 minute.
+}
+
+statistic {
+    statkey HTTP_NumAttempted
+    alias HTTP_NumAttempted
+    datatype float
+    units default
+    description Number of connections which are attempted to be set up.
+}
+
+statistic {
+    statkey HTTP_NumSetupsAborted
+    alias HTTP_NumSetupsAborted
+    datatype float
+    units default
+    description Number of connection setup attempts that were aborted.
+}
+
+statistic {
+    statkey HTTP_NumPolicyDeclined
+    alias HTTP_NumPolicyDeclined
+    datatype float
+    units default
+    description Number of connection setup attempts that were declined due to security reasons.
+}
+
+statistic {
+    statkey HTTP_NumResDeclined
+    alias HTTP_NumResDeclined
+    datatype float
+    units default
+    description Number of connection setup attempts that were declined du to non-availability of required resources.
+}
+
+statistic {
+    statkey HTTP_NumHalfOpen
+    alias HTTP_NumHalfOpen
+    datatype bigint
+    units default
+    description Connections which are in the process of being setup.
+}
+
+statistic {
+    statkey HTTP_NumActive
+    alias HTTP_NumActive
+    datatype bigint
+    units default
+    description Number of connections which are currently active.
+}
+
+statistic {
+    statkey HTTP_NumExpired
+    alias HTTP_NumExpired
+    datatype float
+    units default
+    description Connections which were active but which were since normally terminated.
+}
+
+statistic {
+    statkey HTTP_NumAborted
+    alias HTTP_NumAborted
+    datatype float
+    units default
+    description Connections which were active but which were aborted due to reasons of policy or resource rationing.
+}
+
+statistic {
+    statkey HTTP_SetupRate1
+    alias HTTP_SetupRate1
+    datatype bigint
+    units default
+    description Averaged number of connections establishing per second over the last minute.
+}
+
+statistic {
+    statkey HTTP_SetupRate5
+    alias HTTP_SetupRate5
+    datatype bigint
+    units default
+    description Averaged number of connections establishing per second over the last 5 minute.
+}
+
+statistic {
+    statkey HTTPS_NumAttempted
+    alias HTTPS_NumAttempted
+    datatype float
+    units default
+    description Number of connections which are attempted to be set up.
+}
+
+statistic {
+    statkey HTTPS_NumSetupsAborted
+    alias HTTPS_NumSetupsAborted
+    datatype float
+    units default
+    description Number of connection setup attempts that were aborted.
+}
+
+statistic {
+    statkey HTTPS_NumPolicyDeclined
+    alias HTTPS_NumPolicyDeclined
+    datatype float
+    units default
+    description Number of connection setup attempts that were declined due to security reasons.
+}
+
+statistic {
+    statkey HTTPS_NumResDeclined
+    alias HTTPS_NumResDeclined
+    datatype float
+    units default
+    description Number of connection setup attempts that were declined du to non-availability of required resources.
+}
+
+statistic {
+    statkey HTTPS_NumHalfOpen
+    alias HTTPS_NumHalfOpen
+    datatype bigint
+    units default
+    description Connections which are in the process of being setup.
+}
+
+statistic {
+    statkey HTTPS_NumActive
+    alias HTTPS_NumActive
+    datatype bigint
+    units default
+    description Number of connections which are currently active.
+}
+
+statistic {
+    statkey HTTPS_NumExpired
+    alias HTTPS_NumExpired
+    datatype float
+    units default
+    description Connections which were active but which were since normally terminated.
+}
+
+statistic {
+    statkey HTTPS_NumAborted
+    alias HTTPS_NumAborted
+    datatype float
+    units default
+    description Connections which were active but which were aborted due to reasons of policy or resource rationing.
+}
+
+statistic {
+    statkey HTTPS_SetupRate1
+    alias HTTPS_SetupRate1
+    datatype bigint
+    units default
+    description Averaged number of connections establishing per second over the last minute.
+}
+
+statistic {
+    statkey HTTPS_SetupRate5
+    alias HTTPS_SetupRate5
+    datatype bigint
+    units default
+    description Averaged number of connections establishing per second over the last 5 minute.
+}
+
+statistic {
+    statkey DNS_NumAttempted
+    alias DNS_NumAttempted
+    datatype float
+    units default
+    description Number of connections which are attempted to be set up.
+}
+
+statistic {
+    statkey DNS_NumSetupsAborted
+    alias DNS_NumSetupsAborted
+    datatype float
+    units default
+    description Number of connection setup attempts that were aborted.
+}
+
+statistic {
+    statkey DNS_NumPolicyDeclined
+    alias DNS_NumPolicyDeclined
+    datatype float
+    units default
+    description Number of connection setup attempts that were declined due to security reasons.
+}
+
+statistic {
+    statkey DNS_NumResDeclined
+    alias DNS_NumResDeclined
+    datatype float
+    units default
+    description Number of connection setup attempts that were declined du to non-availability of required resources.
+}
+
+statistic {
+    statkey DNS_NumHalfOpen
+    alias DNS_NumHalfOpen
+    datatype bigint
+    units default
+    description Connections which are in the process of being setup.
+}
+
+statistic {
+    statkey DNS_NumActive
+    alias DNS_NumActive
+    datatype bigint
+    units default
+    description Number of connections which are currently active.
+}
+
+statistic {
+    statkey DNS_NumExpired
+    alias DNS_NumExpired
+    datatype float
+    units default
+    description Connections which were active but which were since normally terminated.
+}
+
+statistic {
+    statkey DNS_NumAborted
+    alias DNS_NumAborted
+    datatype float
+    units default
+    description Connections which were active but which were aborted due to reasons of policy or resource rationing.
+}
+
+statistic {
+    statkey DNS_SetupRate1
+    alias DNS_SetupRate1
+    datatype bigint
+    units default
+    description Averaged number of connections establishing per second over the last minute.
+}
+
+statistic {
+    statkey DNS_SetupRate5
+    alias DNS_SetupRate5
+    datatype bigint
+    units default
+    description Averaged number of connections establishing per second over the last 5 minute.
+}
+
+chart {
+    id 1
+    title Global Connection Events
+    options {
+        ylabel Events/s
+        units default
+        chart-type line
+        series {
+            name GCNumAttempted
+            color \#339900
+        }
+        series {
+            name GCNumSetupsAborted
+            color \#666666
+        }
+        series {
+            name GCNumPolicyDeclined
+            color \#FF0000
+        }
+        series {
+            name GCNumResDeclined
+            color \#990000
+        }
+        series {
+            name GCNumExpired
+            color \#cc3399
+        }
+        series {
+            name GCNumAborted
+            color \#9933cc
+        }
+    }
+}
+
+chart {
+    id 2
+    title Global Connection Statistics
+    options {
+        ylabel Connections
+        units default
+        chart-type line
+        series {
+            name GCNumActive
+            color \#339900
+        }
+        series {
+            name GCNumHalfOpen
+            color \#666666
+        }
+        series {
+            name GCNumEmbryonic
+            color \#FF0000
+        }
+        series {
+            name GCNumRemoteAccess
+            color \#990000
+        }
+        series {
+            name GCSetupRate1
+            color \#cc3399
+        }
+        series {
+            name GCSetupRate5
+            color \#9933cc
+        }
+    }
+}
+
+chart {
+    id 3
+    title ICMP Connection Events
+    options {
+        ylabel Events/s
+        units default
+        chart-type line
+        series {
+            name ICMPNumAttempted
+            color \#339900
+        }
+        series {
+            name ICMPNumSetupsAborted
+            color \#666666
+        }
+        series {
+            name ICMPNumPolicyDeclined
+            color \#FF0000
+        }
+        series {
+            name ICMPNumResDeclined
+            color \#990000
+        }
+        series {
+            name ICMPNumExpired
+            color \#cc3399
+        }
+        series {
+            name ICMPNumAborted
+            color \#9933cc
+        }
+    }
+}
+
+chart {
+    id 4
+    title ICMP Connection Statistics
+    options {
+        ylabel Connections
+        units default
+        chart-type line
+        series {
+            name ICMPNumActive
+            color \#339900
+        }
+        series {
+            name ICMPNumHalfOpen
+            color \#666666
+        }
+        series {
+            name ICMPSetupRate1
+            color \#cc3399
+        }
+        series {
+            name ICMPSetupRate5
+            color \#9933cc
+        }
+    }
+}
+
+chart {
+    id 5
+    title TCP Connection Events
+    options {
+        ylabel Events/s
+        units default
+        chart-type line
+        series {
+            name TCPNumAttempted
+            color \#339900
+        }
+        series {
+            name TCPNumSetupsAborted
+            color \#666666
+        }
+        series {
+            name TCPNumPolicyDeclined
+            color \#FF0000
+        }
+        series {
+            name TCPNumResDeclined
+            color \#990000
+        }
+        series {
+            name TCPNumExpired
+            color \#cc3399
+        }
+        series {
+            name TCPNumAborted
+            color \#9933cc
+        }
+    }
+}
+
+chart {
+    id 6
+    title TCP Connection Statistics
+    options {
+        ylabel Connections
+        units default
+        chart-type line
+        series {
+            name TCPNumActive
+            color \#339900
+        }
+        series {
+            name TCPNumHalfOpen
+            color \#666666
+        }
+        series {
+            name TCPSetupRate1
+            color \#cc3399
+        }
+        series {
+            name TCPSetupRate5
+            color \#9933cc
+        }
+    }
+}
+
+chart {
+    id 7
+    title UDP Connection Events
+    options {
+        ylabel Events/s
+        units default
+        chart-type line
+        series {
+            name UDPNumAttempted
+            color \#339900
+        }
+        series {
+            name UDPNumSetupsAborted
+            color \#666666
+        }
+        series {
+            name UDPNumPolicyDeclined
+            color \#FF0000
+        }
+        series {
+            name UDPNumResDeclined
+            color \#990000
+        }
+        series {
+            name UDPNumExpired
+            color \#cc3399
+        }
+        series {
+            name UDPNumAborted
+            color \#9933cc
+        }
+    }
+}
+
+chart {
+    id 8
+    title UDP Connection Statistics
+    options {
+        ylabel Connections
+        units default
+        chart-type line
+        series {
+            name UDPNumActive
+            color \#339900
+        }
+        series {
+            name UDPNumHalfOpen
+            color \#666666
+        }
+        series {
+            name UDPSetupRate1
+            color \#cc3399
+        }
+        series {
+            name UDPSetupRate5
+            color \#9933cc
+        }
+    }
+}
+
+chart {
+    id 9
+    title HTTP Connection Events
+    options {
+        ylabel Events/s
+        units default
+        chart-type line
+        series {
+            name HTTPNumAttempted
+            color \#339900
+        }
+        series {
+            name HTTPNumSetupsAborted
+            color \#666666
+        }
+        series {
+            name HTTPNumPolicyDeclined
+            color \#FF0000
+        }
+        series {
+            name HTTPNumResDeclined
+            color \#990000
+        }
+        series {
+            name HTTPNumExpired
+            color \#cc3399
+        }
+        series {
+            name HTTPNumAborted
+            color \#9933cc
+        }
+    }
+}
+
+chart {
+    id 10
+    title HTTP Connection Statistics
+    options {
+        ylabel Connections
+        units default
+        chart-type line
+        series {
+            name HTTPNumActive
+            color \#339900
+        }
+        series {
+            name HTTPNumHalfOpen
+            color \#666666
+        }
+        series {
+            name HTTPSetupRate1
+            color \#cc3399
+        }
+        series {
+            name HTTPSetupRate5
+            color \#9933cc
+        }
+    }
+}
+
+chart {
+    id 11
+    title HTTPS Connection Events
+    options {
+        ylabel Events/s
+        units default
+        chart-type line
+        series {
+            name HTTPSNumAttempted
+            color \#339900
+        }
+        series {
+            name HTTPSNumSetupsAborted
+            color \#666666
+        }
+        series {
+            name HTTPSNumPolicyDeclined
+            color \#FF0000
+        }
+        series {
+            name HTTPSNumResDeclined
+            color \#990000
+        }
+        series {
+            name HTTPSNumExpired
+            color \#cc3399
+        }
+        series {
+            name HTTPSNumAborted
+            color \#9933cc
+        }
+    }
+}
+
+chart {
+    id 12
+    title HTTPS Connection Statistics
+    options {
+        ylabel Connections
+        units default
+        chart-type line
+        series {
+            name HTTPSNumActive
+            color \#339900
+        }
+        series {
+            name HTTPSNumHalfOpen
+            color \#666666
+        }
+        series {
+            name HTTPSSetupRate1
+            color \#cc3399
+        }
+        series {
+            name HTTPSSetupRate5
+            color \#9933cc
+        }
+    }
+}
+
+chart {
+    id 13
+    title DNS Connection Events
+    options {
+        ylabel Events/s
+        units default
+        chart-type line
+        series {
+            name DNSNumAttempted
+            color \#339900
+        }
+        series {
+            name DNSNumSetupsAborted
+            color \#666666
+        }
+        series {
+            name DNSNumPolicyDeclined
+            color \#FF0000
+        }
+        series {
+            name DNSNumResDeclined
+            color \#990000
+        }
+        series {
+            name DNSNumExpired
+            color \#cc3399
+        }
+        series {
+            name DNSNumAborted
+            color \#9933cc
+        }
+    }
+}
+
+chart {
+    id 14
+    title DNS Connection Statistics
+    options {
+        ylabel Connections
+        units default
+        chart-type line
+        series {
+            name DNSNumActive
+            color \#339900
+        }
+        series {
+            name DNSNumHalfOpen
+            color \#666666
+        }
+        series {
+            name DNSSetupRate1
+            color \#cc3399
+        }
+        series {
+            name DNSSetupRate5
+            color \#9933cc
+        }
+    }
+}

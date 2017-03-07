@@ -1,0 +1,85 @@
+plugin {
+    id 10005
+    plugin SNMP.NBAR
+    command check-snmp-nbar
+    datatype statistic
+    category Network,SNMP
+    netaccess yes
+    prefer localhost
+    abstract Check snmp-nbar
+    description Checks protocol statistics of an interfaces.
+}
+
+
+statistic {
+    statkey in_proto_octets
+    alias in_proto_octets
+    datatype float
+    units bytes
+    description The number of bytes received by the protocol on the interface
+}
+
+statistic {
+    statkey out_proto_octets
+    alias out_proto_octets
+    datatype float
+    units bytes
+    description The number of bytes send by the protocol on the interface
+}
+
+statistic {
+    statkey in_proto_pkts
+    alias in_proto_pkts
+    datatype float
+    units bytes
+    description The number of packets received by the protocol on the interface
+}
+
+statistic {
+    statkey iops_write
+    alias lvIoWrite
+    datatype float
+    units bytes
+    description The number of packets send by the protocol on the interface
+}
+
+
+chart {
+    id 1
+    title SNMP NBAR - in/out octets
+    options {
+        ylabel bytes received(+) / send(-)
+        units bytes
+        chart-type area
+        series {
+            name in_proto_octets
+            color \#005467
+        }
+        series {
+            name out_proto_octets
+            color \#ff7a0d
+            opposite true
+        }
+    }
+}
+
+chart {
+    id 2
+    title SNMP NBAR - in/out packets
+    options {
+        packets received(+) / send(-)
+        units default
+        chart-type area
+        series {
+            name in_proto_pkts
+            color \#005467
+        }
+        series {
+            name out_proto_pkts
+            color \#ff7a0d
+            opposite true
+        }
+    }
+}
+
+

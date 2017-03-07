@@ -1,0 +1,341 @@
+#!/usr/bin/perl
+
+=head1 NAME
+
+check-snmp-rmon - Plugin to check interfaces rmon stats by snmp.
+
+=head1 SYNOPSIS
+
+    check-snmp-rmon [ OPTIONS ]
+
+    check-snmp-rmon --help
+
+=head1 REPORTING BUGS
+
+Please report all bugs to <support(at)bloonix.de>.
+
+=head1 AUTHOR
+
+Jonny Schulz <support(at)bloonix.de>.
+
+=head1 POWERED BY
+
+     _    __ _____ _____ __  __ __ __   __
+    | |__|  |     |     |  \|  |__|\  \/  /
+    |  . |  |  |  |  |  |      |  | >    <
+    |____|__|_____|_____|__|\__|__|/__/\__\
+
+=head1 COPYRIGHT
+
+Copyright (C) 2016 by Jonny Schulz. All rights reserved.
+
+=cut
+
+use strict;
+use warnings;
+use Bloonix::Plugin;
+use Fcntl qw(:flock :DEFAULT);
+use Net::SNMP;
+
+# --------------------------------------------------
+# Plugin options
+# --------------------------------------------------
+
+my $plugin = Bloonix::Plugin->new(version => "0.1");
+
+$plugin->example(
+    description => "Monitor the rmon stats of a interface on a switch:",
+    arguments => [
+        interface => "Gi1/0/1",
+        host => "127.0.0.1",
+        port => 161,
+        community => "public",
+        "snmp-version" => 1
+    ]
+);
+
+$plugin->example(
+    description => "Monitor the rmon stats of a interface on a switch:",
+    arguments => [
+        interface => 10101,
+        host => "127.0.0.1",
+        port => 161,
+        community => "public",
+        "snmp-version" => 1
+    ]
+);
+
+$plugin->add_option(
+    name => "Network interface",
+    option => "interface",
+    value => "interface",
+    value_type => "string",
+    mandatory => 1,
+    description => join(" ",
+        "This is the network interface you want to check. The interface name should",
+        "the string that is found in ifName (1.3.6.1.2.1.31.1.1.1.1)."
+    )
+);
+
+$plugin->has_snmp;
+$plugin->has_debug;
+
+$plugin->has_threshold(
+    keys => [
+        { key => "DropEvents" },
+        { key => "Octets", unit => "bytes" },
+        { key => "Pkts" },
+        { key => "BroadcastPkts" },
+        { key => "MulticastPkts" },
+        { key => "CRCAlignErrors" },
+        { key => "UndersizePkts" },
+        { key => "OversizePkts" },
+        { key => "Fragments" },
+        { key => "Jabbers" },
+        { key => "Collisions" },
+        { key => "Pkts64Octets" },
+        { key => "Pkts65to127Octets" },
+        { key => "Pkts128to255Octets" },
+        { key => "Pkts256to511Octets" },
+        { key => "Pkts512to1023Octets" },
+        { key => "Pkts1024to1518Octets" }
+    ]
+);
+
+
+$plugin->add_option(
+    name => "Debug",
+    option => "debug",
+    description => "Turn on debugging. Just useful if you want to test something.",
+    command_line_only => 1
+);
+
+$plugin->add_option(
+    name => "No cache",
+    option => "no-cache",
+    description => "Do not cache SNMP results for 10 seconds.",
+    command_line_only => 1
+);
+
+# --------------------------------------------------
+# Parse options
+# --------------------------------------------------
+
+my $opt = $plugin->parse_options;
+
+# --------------------------------------------------
+# Some OIDs
+# --------------------------------------------------
+
+# Base table oids
+my $if_name_base = "1.3.6.1.2.1.31.1.1.1.1";
+my $rmon_base   = "1.3.6.1.2.1.16.1.1.1";
+
+my %rmon_counter = (
+   DropEvents           => "1.3.6.1.2.1.16.1.1.1.3",
+   Octets               => "1.3.6.1.2.1.16.1.1.1.4",
+   Pkts                 => "1.3.6.1.2.1.16.1.1.1.5",
+   BroadcastPkts        => "1.3.6.1.2.1.16.1.1.1.6",
+   MulticastPkts        => "1.3.6.1.2.1.16.1.1.1.7",
+   CRCAlignErrors       => "1.3.6.1.2.1.16.1.1.1.8",
+   UndersizePkts        => "1.3.6.1.2.1.16.1.1.1.9",
+   OversizePkts         => "1.3.6.1.2.1.16.1.1.1.10",
+   Fragments            => "1.3.6.1.2.1.16.1.1.1.11",
+   Jabbers              => "1.3.6.1.2.1.16.1.1.1.12",
+   Collisions           => "1.3.6.1.2.1.16.1.1.1.13",
+   Pkts64Octets         => "1.3.6.1.2.1.16.1.1.1.14",
+   Pkts65to127Octets    => "1.3.6.1.2.1.16.1.1.1.15",
+   Pkts128to255Octets   => "1.3.6.1.2.1.16.1.1.1.16",
+   Pkts256to511Octets   => "1.3.6.1.2.1.16.1.1.1.17",
+   Pkts512to1023Octets  => "1.3.6.1.2.1.16.1.1.1.18",
+   Pkts1024to1518Octets => "1.3.6.1.2.1.16.1.1.1.19"
+);
+
+
+# --------------------------------------------------
+# Get cached or latest SNMP data
+# --------------------------------------------------
+
+my ($rmon_result, $if_names);
+my ($connection_string, $cache_file, $file_stat, $time, $data);
+
+$connection_string = join("_", "bloonix-check-snmp-rmon-cache", $opt->{host}, $opt->{community}, $opt->{port});
+$connection_string =~ s/\W/_/g;
+$cache_file = join("/", $plugin->plugin_libdir, $connection_string);
+$cache_file .= ".json";
+$file_stat = [ stat($cache_file) ];
+
+#system("cat $cache_file");
+sysopen my $fh, $cache_file, O_RDWR | O_CREAT or do {
+    $plugin->exit(
+        status => "UNKNOWN",
+        message => "unable to open file '$cache_file' - $!"
+    );
+};
+
+flock($fh, LOCK_EX);
+
+if ($file_stat->[7]) {
+    my $rest = $file_stat->[7];
+    my $offset = 0;
+    my $done = 0;
+
+    while ($rest > 0) {
+        my $len = sysread($fh, my $buf, $rest, $offset);
+
+        if (!defined $len) {
+            next if $! =~ /^Interrupted/;
+            $plugin->exit(
+                status => "UNKNOWN",
+                message => "unable to read from file '$cache_file' - $!"
+            );
+        }
+
+        $data .= $buf;
+        $rest -= $len;
+        $offset += $len;
+    }
+}
+
+if (!$opt->{no_cache} && defined $file_stat->[10] && $file_stat->[10] + 10 >= time && $data && $data =~ /^{.+}$/) {
+    $data = JSON->new->decode($data);
+    $if_names = $data->{qos}->{names};
+    $rmon_result = $data->{qos}->{result};
+    $time = $data->{time};
+} else {
+    my $snmp = $plugin->start_snmp_session;
+    $snmp->max_msg_size(65535);
+    $if_names = $snmp->get_table($if_name_base);
+    $rmon_result = $snmp->get_table($rmon_base);
+    
+    $time = time;
+
+    sysseek $fh, 0, 0;
+
+    $data = JSON->new->encode({
+        time => $time,
+        qos => {
+            names => $if_names,
+            result => $rmon_result
+        }
+    });
+
+    my $rest = length $data;
+    my $offset = 0;
+
+    while ($rest) {
+        my $written = syswrite $fh, $data, $rest, $offset;
+
+        if (!defined $written) {
+            die "system write error: $!";
+        } elsif ($written) {
+            $rest -= $written;
+            $offset += $written;
+        }
+    }
+
+    truncate $fh, length $data;
+}
+
+close $fh;
+
+if (!defined $rmon_result) {
+    $plugin->exit(
+        status => "CRITICAL",
+        message => "unable to get oid table from host $opt->{host}\n"
+    );
+}
+
+# --------------------------------------------------
+# Let's have a look how many interfaces exists
+# --------------------------------------------------
+
+my $if;
+my $search = $if_names;
+
+foreach my $oid (keys %$search) {
+    if ($oid =~ /(\d+)\z/) {
+        my $if_num = $1;
+
+        if ($opt->{debug}) {
+            print STDERR ">> found interface $oid -> $search->{$oid}\n";
+        }
+
+        if ($opt->{interface} =~ /^\d+\z/) {
+            if ($opt->{interface} eq $if_num) {
+                $if = $if_num;
+            }
+        } elsif ($search->{$oid} eq $opt->{interface}) {
+            $if = $if_num;
+        }
+
+        if (defined $if) {
+            if ($opt->{debug}) {
+                print STDERR ">> interface $search->{$oid} matched\n";
+            }
+            last;
+        }
+    }
+}
+
+if (!$if) {
+    $plugin->exit(
+        status => "UNKNOWN",
+        message => "interface $opt->{interface} does not exists"
+    );
+}
+
+
+
+# --------------------------------------------------
+# Fetch the statistics from the snmp result
+# --------------------------------------------------
+
+
+
+my $stat = { };
+
+my ($counters, $result);
+
+
+    $counters = \%rmon_counter;
+    $result = $rmon_result;
+
+
+foreach my $key (keys %$counters) {
+    my $oid = $counters->{$key};
+    
+
+        if (!exists $result->{"$oid.$if"} && $key !~ /nucast/) {
+        $plugin->exit(
+            status => "UNKOWN",
+            message => "oid $oid.$if does not exists"
+            );
+           }
+        $stat->{$key} = $result->{"$oid.$if"} || 0;
+}
+
+
+
+my %delta_keys = (%rmon_counter);
+
+foreach my $key (keys %delta_keys) {
+    if (!exists $stat->{$key}) {
+        $stat->{$key} = 0;
+    }
+}
+
+$plugin->delta(time => $time, stat => $stat, keys => [ keys %delta_keys ]);
+
+  
+
+# --------------------------------------------------
+# Check thresholds
+# --------------------------------------------------
+
+
+$plugin->check_thresholds(
+    stats => $stat,
+    upshot_keys => [qw(Octets Pkts)],
+    exit => "yes"
+);

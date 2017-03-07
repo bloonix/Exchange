@@ -1,0 +1,146 @@
+plugin {
+    id 10010
+    plugin SNMP.IOS.Process
+    command check-snmp-ios-proc
+    datatype statistic
+    category Network,SNMP
+    netaccess yes
+    prefer localhost
+    abstract Check snmp-ios-proc
+    description Monitor the process of a Cisco IOS Device.
+}
+
+statistic {
+    statkey Priority
+    alias Priority
+    datatype varchar(20)
+    units bytes
+    description The priority level at which the process is running.
+}
+
+statistic {
+    statkey Util5Sec
+    alias Util5Sec
+    datatype bigint
+    units percent
+    description A estimate of how busy a process caused the processor to be over a 5 second period.
+}
+
+statistic {
+    statkey Util1Min
+    alias Util1Min
+    datatype bigint
+    units percent
+    description A estimate of how busy a process caused the processor to be over a 1 minute period.
+}
+
+statistic {
+    statkey Util5Min
+    alias Util5Min
+    datatype bigint
+    units percent
+    description A estimate of how busy a process caused the processor to be over a 5 minutes period.
+}
+
+statistic {
+    statkey MemAllocated
+    alias MemAllocated
+    datatype float
+    units bytes
+    description The sum of all the dynamically allocated memory that this process has received from the system.
+}
+
+statistic {
+    statkey MemFreed
+    alias MemFreed
+    datatype float
+    units bytes
+    description The sum of all memory that this process has returned to the system.
+}
+
+statistic {
+    statkey Invoked
+    alias Invoked
+    datatype float
+    units default
+    description The number of times since cpmTimeCreated that the process has been invoked.
+}
+
+statistic {
+    statkey Runtime
+    alias Runtime
+    datatype float
+    units default
+    description The amount of CPU time the process has used, in microseconds.
+}
+
+
+
+chart {
+    id 1
+    title SNMP IOS Process Load
+    options {
+        ylabel percent
+        units percent
+        chart-type line
+        series {
+            name Util5Sec
+            color \#9a72ad
+        }
+        series {
+            name Util1Min
+            color \#e9644a
+        }
+        series {
+            name Util5Min
+            color \#ffb244
+        }
+    }
+}
+
+chart {
+    id 2
+    title SNMP IOS Process Memory
+    options {
+        ylabel bytes/s
+        units bytes
+        chart-type area
+        series {
+            name MemAllocated
+            color \#005467
+        }
+        series {
+            name MemFreed
+            color \#ff7a0d
+            opposite true
+        }
+    }
+}
+
+chart {
+    id 3
+    title SNMP IOS Process Invokes
+    options {
+        ylabel Invokes/s
+        units default
+        chart-type area
+        series {
+            name Invoked
+            color \#ffb244
+        }
+    }
+}
+
+chart {
+    id 4
+    title SNMP IOS Process Runtime
+    options {
+        ylabel microseconds
+        units default
+        chart-type area
+        series {
+            name Runtime
+            color \#ffb244
+        }
+    }
+}

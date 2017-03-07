@@ -1,0 +1,366 @@
+{
+   "plugin" : {
+      "description" : "Monitor the process of a Cisco IOS Device.",
+      "datatype" : "statistic",
+      "plugin" : "SNMP.IOS.Process",
+      "command" : "check-snmp-ios-proc",
+      "id" : "10010",
+      "netaccess" : "yes",
+      "abstract" : "Check snmp-ios-proc",
+      "category" : "Network,SNMP",
+      "prefer" : "localhost",
+      "info" : {
+         "version" : "0.3",
+         "examples" : [
+            {
+               "command_line" : "check-snmp-ios-proc --process 'IP Input' --host '127.0.0.1' --port '161' --community 'public' --snmp-version '1'",
+               "arguments" : [
+                  "process",
+                  "IP Input",
+                  "host",
+                  "127.0.0.1",
+                  "port",
+                  161,
+                  "community",
+                  "public",
+                  "snmp-version",
+                  1
+               ],
+               "description" : [
+                  "Monitor the process of a Cisco IOS Device:"
+               ]
+            }
+         ],
+         "plugin" : "check-snmp-ios-proc",
+         "options" : [
+            {
+               "default" : null,
+               "name" : "Process Name",
+               "value_desc" : "process",
+               "option" : "process",
+               "value_type" : "string",
+               "description" : "This is the process you want to check. The process name should be the full name from 1.3.6.1.4.1.9.9.109.1.2.1.1.2",
+               "mandatory" : 1,
+               "multiple" : 0
+            },
+            {
+               "value_type" : "string",
+               "multiple" : 0,
+               "mandatory" : 0,
+               "description" : "A hostname or IP address to connect to.",
+               "name" : "Hostname or IP address",
+               "value_desc" : "hostname or ip address",
+               "default" : "127.0.0.1",
+               "option" : "host"
+            },
+            {
+               "value_type" : "int",
+               "description" : "A port number to connect to.",
+               "mandatory" : 0,
+               "multiple" : 0,
+               "default" : 161,
+               "name" : "Port number",
+               "value_desc" : "port",
+               "option" : "port"
+            },
+            {
+               "description" : "The SNMP community to connect to the host.",
+               "multiple" : 0,
+               "mandatory" : 0,
+               "value_type" : "string",
+               "option" : "community",
+               "default" : "public",
+               "value_desc" : "community",
+               "name" : "SNMP community"
+            },
+            {
+               "default" : 2,
+               "value_desc" : "version",
+               "name" : "SNMP version",
+               "option" : "snmp-version",
+               "value_type" : "string",
+               "description" : "The SNMP version to use to connect to the host.",
+               "mandatory" : 0,
+               "multiple" : 0
+            },
+            {
+               "option" : "username",
+               "name" : "SNMPv3 username",
+               "value_desc" : "username",
+               "default" : null,
+               "multiple" : 0,
+               "mandatory" : 0,
+               "description" : "The SNMPv3 username.",
+               "value_type" : "string"
+            },
+            {
+               "option" : "authkey",
+               "default" : null,
+               "value_desc" : "authkey",
+               "name" : "SNMPv3 auth key",
+               "description" : "The SNMPv3 auth key.",
+               "multiple" : 0,
+               "mandatory" : 0,
+               "value_type" : "string"
+            },
+            {
+               "option" : "authpassword",
+               "default" : null,
+               "value_desc" : "authpassword",
+               "name" : "SNMPv3 auth password",
+               "description" : "The SNMPv3 auth password.",
+               "mandatory" : 0,
+               "multiple" : 0,
+               "value_type" : "string"
+            },
+            {
+               "option" : "authprotocol",
+               "default" : null,
+               "name" : "SNMPv3 auth protocol",
+               "value_desc" : "authprotocol",
+               "description" : "The SNMPv3 auth protocol.",
+               "multiple" : 0,
+               "mandatory" : 0,
+               "value_type" : "string"
+            },
+            {
+               "option" : "privkey",
+               "name" : "SNMPv3 priv key",
+               "value_desc" : "privkey",
+               "default" : null,
+               "multiple" : 0,
+               "mandatory" : 0,
+               "description" : "The SNMPv3 priv key.",
+               "value_type" : "string"
+            },
+            {
+               "description" : "The SNMPv3 priv password.",
+               "mandatory" : 0,
+               "multiple" : 0,
+               "value_type" : "string",
+               "option" : "privpassword",
+               "default" : null,
+               "value_desc" : "privpassword",
+               "name" : "SNMPv3 priv password"
+            },
+            {
+               "value_type" : "string",
+               "description" : "The SNMPv3 priv protocol.",
+               "multiple" : 0,
+               "mandatory" : 0,
+               "default" : null,
+               "value_desc" : "privprotocol",
+               "name" : "SNMPv3 priv protocol",
+               "option" : "privprotocol"
+            },
+            {
+               "option" : "warning",
+               "name" : "Warning threshold",
+               "value_desc" : "key:value or key:op:value",
+               "default" : null,
+               "mandatory" : 0,
+               "multiple" : 1,
+               "description" : "This is the warning threshold. When the value exceeds the threshold a warning status is triggered. Please see the examples for more information.",
+               "value_type" : "string"
+            },
+            {
+               "value_desc" : "key:value or key:op:value",
+               "name" : "Critical threshold",
+               "default" : null,
+               "option" : "critical",
+               "value_type" : "string",
+               "mandatory" : 0,
+               "multiple" : 1,
+               "description" : "This is the critical threshold. When the value exceeds the threshold a critical status is triggered. Please see the examples for more information."
+            }
+         ],
+         "flags" : "",
+         "thresholds" : {
+            "options" : [
+               {
+                  "unit" : "bytes",
+                  "key" : "MemAllocated"
+               },
+               {
+                  "key" : "MemFreed",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "Invoked",
+                  "unit" : "none"
+               },
+               {
+                  "key" : "Runtime",
+                  "unit" : "none"
+               },
+               {
+                  "unit" : "percent",
+                  "key" : "Util5Sec"
+               },
+               {
+                  "key" : "Util1Min",
+                  "unit" : "percent"
+               },
+               {
+                  "unit" : "percent",
+                  "key" : "Util5Min"
+               }
+            ],
+            "info" : [
+               "How to set warning and critical thresholds:\n\n",
+               "  It's possible to set thresholds for one or more statistic keys.\n",
+               "  The format to add a threshold for a statistic key is:\n\n",
+               "    key:operator:threshold\n\n",
+               "  or if a unit makes sense\n\n",
+               "    key:operator:threshold + UNIT\n\n",
+               "  where the unit can be in ",
+               "bytes or percent",
+               ".\n\n",
+               "  If no operator is set then the default operator is 'ge'.\n\n",
+               "  The following operators are available:\n\n",
+               "    lt = less than\n",
+               "    le = less than or equal\n",
+               "    gt = greater than\n",
+               "    ge = greater than or equal\n",
+               "    eq = equal\n",
+               "    ne = not equal\n",
+               "\n",
+               "  Allowed units for bytes:\n\n",
+               "    KB = Kilobytes   TB = Terabytes   ZB = Zettabytes\n",
+               "    MB = Megabytes   PB = Petabytes   YB = Yottabytes\n",
+               "    GB = Gigabytes   EB = Exabytes\n\n",
+               "  Allowed units for percent: %\n\n"
+            ]
+         }
+      }
+   },
+   "chart" : [
+      {
+         "options" : {
+            "units" : "percent",
+            "series" : [
+               {
+                  "name" : "Util5Sec",
+                  "color" : "#9a72ad"
+               },
+               {
+                  "color" : "#e9644a",
+                  "name" : "Util1Min"
+               },
+               {
+                  "color" : "#ffb244",
+                  "name" : "Util5Min"
+               }
+            ],
+            "ylabel" : "percent",
+            "chart-type" : "line"
+         },
+         "title" : "SNMP IOS Process Load",
+         "id" : "1"
+      },
+      {
+         "options" : {
+            "ylabel" : "bytes/s",
+            "chart-type" : "area",
+            "series" : [
+               {
+                  "name" : "MemAllocated",
+                  "color" : "#005467"
+               },
+               {
+                  "opposite" : "true",
+                  "name" : "MemFreed",
+                  "color" : "#ff7a0d"
+               }
+            ],
+            "units" : "bytes"
+         },
+         "title" : "SNMP IOS Process Memory",
+         "id" : "2"
+      },
+      {
+         "title" : "SNMP IOS Process Invokes",
+         "id" : "3",
+         "options" : {
+            "chart-type" : "area",
+            "ylabel" : "Invokes/s",
+            "series" : {
+               "color" : "#ffb244",
+               "name" : "Invoked"
+            },
+            "units" : "default"
+         }
+      },
+      {
+         "title" : "SNMP IOS Process Runtime",
+         "id" : "4",
+         "options" : {
+            "series" : {
+               "color" : "#ffb244",
+               "name" : "Runtime"
+            },
+            "chart-type" : "area",
+            "ylabel" : "microseconds",
+            "units" : "default"
+         }
+      }
+   ],
+   "statistic" : [
+      {
+         "units" : "bytes",
+         "alias" : "Priority",
+         "datatype" : "varchar(20)",
+         "statkey" : "Priority",
+         "description" : "The priority level at which the process is running."
+      },
+      {
+         "description" : "A estimate of how busy a process caused the processor to be over a 5 second period.",
+         "units" : "percent",
+         "datatype" : "bigint",
+         "alias" : "Util5Sec",
+         "statkey" : "Util5Sec"
+      },
+      {
+         "description" : "A estimate of how busy a process caused the processor to be over a 1 minute period.",
+         "units" : "percent",
+         "statkey" : "Util1Min",
+         "alias" : "Util1Min",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "A estimate of how busy a process caused the processor to be over a 5 minutes period.",
+         "units" : "percent",
+         "datatype" : "bigint",
+         "alias" : "Util5Min",
+         "statkey" : "Util5Min"
+      },
+      {
+         "description" : "The sum of all the dynamically allocated memory that this process has received from the system.",
+         "units" : "bytes",
+         "statkey" : "MemAllocated",
+         "alias" : "MemAllocated",
+         "datatype" : "float"
+      },
+      {
+         "description" : "The sum of all memory that this process has returned to the system.",
+         "units" : "bytes",
+         "statkey" : "MemFreed",
+         "datatype" : "float",
+         "alias" : "MemFreed"
+      },
+      {
+         "units" : "default",
+         "datatype" : "float",
+         "alias" : "Invoked",
+         "statkey" : "Invoked",
+         "description" : "The number of times since cpmTimeCreated that the process has been invoked."
+      },
+      {
+         "description" : "The amount of CPU time the process has used, in microseconds.",
+         "units" : "default",
+         "alias" : "Runtime",
+         "datatype" : "float",
+         "statkey" : "Runtime"
+      }
+   ]
+}

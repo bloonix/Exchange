@@ -1,0 +1,1431 @@
+{
+   "statistic" : [
+      {
+         "description" : "Number of connections which are attempted to be set up.",
+         "units" : "default",
+         "alias" : "GCNumAttempted",
+         "statkey" : "GCNumAttempted",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Number of connection setup attempts that were aborted.",
+         "units" : "default",
+         "alias" : "GCNumSetupsAborted",
+         "statkey" : "GCNumSetupsAborted",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Number of connection setup attempts that were declined due to security reasons.",
+         "units" : "default",
+         "alias" : "GCNumPolicyDeclined",
+         "statkey" : "GCNumPolicyDeclined",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Number of connection setup attempts that were declined du to non-availability of required resources.",
+         "units" : "default",
+         "alias" : "GCNumResDeclined",
+         "statkey" : "GCNumResDeclined",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Connections which are in the process of being setup.",
+         "units" : "default",
+         "alias" : "GCNumHalfOpen",
+         "statkey" : "GCNumHalfOpen",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Number of connections which are currently active.",
+         "units" : "default",
+         "alias" : "GCNumActive",
+         "statkey" : "GCNumActive",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Connections which were active but which were since normally terminated.",
+         "units" : "default",
+         "alias" : "GCNumExpired",
+         "statkey" : "GCNumExpired",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Connections which were active but which were aborted due to reasons of policy or resource rationing.",
+         "units" : "default",
+         "alias" : "GCNumAborted",
+         "statkey" : "GCNumAborted",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Embryonic application layer connections",
+         "units" : "default",
+         "alias" : "GCNumEmbryonic",
+         "statkey" : "GCNumEmbryonic",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Averaged number of connections establishing per second over the last minute.",
+         "units" : "default",
+         "alias" : "GCSetupRate1",
+         "statkey" : "GCSetupRate1",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Averaged number of connections establishing per second over the last 5 minutes.",
+         "units" : "default",
+         "alias" : "GCSetupRate5",
+         "statkey" : "GCSetupRate5",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Active connections which correspond to remote access applications(PPP, PPTP, L2TP, IPSEC).",
+         "units" : "default",
+         "alias" : "GCNumRemoteAccess",
+         "statkey" : "GCNumRemoteAccess",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Number of connections which are attempted to be set up.",
+         "units" : "default",
+         "alias" : "ICMP_NumAttempted",
+         "statkey" : "ICMP_NumAttempted",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Number of connection setup attempts that were aborted.",
+         "units" : "default",
+         "alias" : "ICMP_NumSetupsAborted",
+         "statkey" : "ICMP_NumSetupsAborted",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Number of connection setup attempts that were declined due to security.",
+         "units" : "default",
+         "alias" : "ICMP_NumPolicyDeclined",
+         "statkey" : "ICMP_NumPolicyDeclined",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Number of connection setup attempts that were declined du to non-availability of required resources.",
+         "units" : "default",
+         "alias" : "ICMP_NumResDeclined",
+         "statkey" : "ICMP_NumResDeclined",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Connections which are in the process of being setup.",
+         "units" : "default",
+         "alias" : "ICMP_NumHalfOpen",
+         "statkey" : "ICMP_NumHalfOpen",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Number of connections which are currently active.",
+         "units" : "default",
+         "alias" : "ICMP_NumActive",
+         "statkey" : "ICMP_NumActive",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Connections which were active but which were since normally terminated.",
+         "units" : "default",
+         "alias" : "ICMP_NumExpired",
+         "statkey" : "ICMP_NumExpired",
+         "datatype" : "float"
+      },
+      {
+         "description" : "connections which were active but which were aborted due to reasons of policy or resource rationing",
+         "units" : "default",
+         "alias" : "ICMP_NumAborted",
+         "statkey" : "ICMP_NumAborted",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Averaged number of connections establishing per second over the last minute",
+         "units" : "default",
+         "alias" : "ICMP_SetupRate1",
+         "statkey" : "ICMP_SetupRate1",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Averaged number of connections establishing per second over the last 5 minutes",
+         "units" : "default",
+         "alias" : "ICMP_SetupRate5",
+         "statkey" : "ICMP_SetupRate5",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Number of connections which are attempted to be set up.",
+         "units" : "default",
+         "alias" : "TCP_NumAttempted",
+         "statkey" : "TCP_NumAttempted",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Number of connection setup attempts that were aborted.",
+         "units" : "default",
+         "alias" : "TCP_NumSetupsAborted",
+         "statkey" : "TCP_NumSetupsAborted",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Number of connection setup attempts that were declined due to security.",
+         "units" : "default",
+         "alias" : "TCP_NumPolicyDeclined",
+         "statkey" : "TCP_NumPolicyDeclined",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Number of connection setup attempts that were declined du to non-availability of required resources.",
+         "units" : "default",
+         "alias" : "TCP_NumResDeclined",
+         "statkey" : "TCP_NumResDeclined",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Connections which are in the process of being setup.",
+         "units" : "default",
+         "alias" : "TCP_NumHalfOpen",
+         "statkey" : "TCP_NumHalfOpen",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Number of connections which are currently active.",
+         "units" : "default",
+         "alias" : "TCP_NumActive",
+         "statkey" : "TCP_NumActive",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Connections which were active but which were since normally terminated.",
+         "units" : "default",
+         "alias" : "TCP_NumExpired",
+         "statkey" : "TCP_NumExpired",
+         "datatype" : "float"
+      },
+      {
+         "description" : "connections which were active but which were aborted due to reasons of policy or resource rationing",
+         "units" : "default",
+         "alias" : "TCP_NumAborted",
+         "statkey" : "TCP_NumAborted",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Averaged number of connections establishing per second over the last minute",
+         "units" : "default",
+         "alias" : "TCP_SetupRate1",
+         "statkey" : "TCP_SetupRate1",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Averaged number of connections establishing per second over the last 5 minutes",
+         "units" : "default",
+         "alias" : "TCP_SetupRate5",
+         "statkey" : "TCP_SetupRate5",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Number of connections which are attempted to be set up.",
+         "units" : "default",
+         "alias" : "UDP_NumAttempted",
+         "statkey" : "UDP_NumAttempted",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Number of connection setup attempts that were aborted.",
+         "units" : "default",
+         "alias" : "UDP_NumSetupsAborted",
+         "statkey" : "UDP_NumSetupsAborted",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Number of connection setup attempts that were declined due to security.",
+         "units" : "default",
+         "alias" : "UDP_NumPolicyDeclined",
+         "statkey" : "UDP_NumPolicyDeclined",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Number of connection setup attempts that were declined du to non-availability of required resources.",
+         "units" : "default",
+         "alias" : "UDP_NumResDeclined",
+         "statkey" : "UDP_NumResDeclined",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Connections which are in the process of being setup.",
+         "units" : "default",
+         "alias" : "UDP_NumHalfOpen",
+         "statkey" : "UDP_NumHalfOpen",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Number of connections which are currently active.",
+         "units" : "default",
+         "alias" : "UDP_NumActive",
+         "statkey" : "UDP_NumActive",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Connections which were active but which were since normally terminated.",
+         "units" : "default",
+         "alias" : "UDP_NumExpired",
+         "statkey" : "UDP_NumExpired",
+         "datatype" : "float"
+      },
+      {
+         "description" : "connections which were active but which were aborted due to reasons of policy or resource rationing",
+         "units" : "default",
+         "alias" : "UDP_NumAborted",
+         "statkey" : "UDP_NumAborted",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Averaged number of connections establishing per second over the last minute",
+         "units" : "default",
+         "alias" : "UDP_SetupRate1",
+         "statkey" : "UDP_SetupRate1",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Averaged number of connections establishing per second over the last 5 minutes",
+         "units" : "default",
+         "alias" : "UDP_SetupRate5",
+         "statkey" : "UDP_SetupRate5",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Number of connections which are attempted to be set up.",
+         "units" : "default",
+         "alias" : "HTTP_NumAttempted",
+         "statkey" : "HTTP_NumAttempted",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Number of connection setup attempts that were aborted.",
+         "units" : "default",
+         "alias" : "HTTP_NumSetupsAborted",
+         "statkey" : "HTTP_NumSetupsAborted",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Number of connection setup attempts that were declined due to security.",
+         "units" : "default",
+         "alias" : "HTTP_NumPolicyDeclined",
+         "statkey" : "HTTP_NumPolicyDeclined",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Number of connection setup attempts that were declined du to non-availability of required resources.",
+         "units" : "default",
+         "alias" : "HTTP_NumResDeclined",
+         "statkey" : "HTTP_NumResDeclined",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Connections which are in the process of being setup.",
+         "units" : "default",
+         "alias" : "HTTP_NumHalfOpen",
+         "statkey" : "HTTP_NumHalfOpen",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Number of connections which are currently active.",
+         "units" : "default",
+         "alias" : "HTTP_NumActive",
+         "statkey" : "HTTP_NumActive",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Connections which were active but which were since normally terminated.",
+         "units" : "default",
+         "alias" : "HTTP_NumExpired",
+         "statkey" : "HTTP_NumExpired",
+         "datatype" : "float"
+      },
+      {
+         "description" : "connections which were active but which were aborted due to reasons of policy or resource rationing",
+         "units" : "default",
+         "alias" : "HTTP_NumAborted",
+         "statkey" : "HTTP_NumAborted",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Averaged number of connections establishing per second over the last minute",
+         "units" : "default",
+         "alias" : "HTTP_SetupRate1",
+         "statkey" : "HTTP_SetupRate1",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Averaged number of connections establishing per second over the last 5 minutes",
+         "units" : "default",
+         "alias" : "HTTP_SetupRate5",
+         "statkey" : "HTTP_SetupRate5",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Number of connections which are attempted to be set up.",
+         "units" : "default",
+         "alias" : "HTTPS_NumAttempted",
+         "statkey" : "HTTPS_NumAttempted",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Number of connection setup attempts that were aborted.",
+         "units" : "default",
+         "alias" : "HTTPS_NumSetupsAborted",
+         "statkey" : "HTTPS_NumSetupsAborted",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Number of connection setup attempts that were declined due to security.",
+         "units" : "default",
+         "alias" : "HTTPS_NumPolicyDeclined",
+         "statkey" : "HTTPS_NumPolicyDeclined",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Number of connection setup attempts that were declined du to non-availability of required resources.",
+         "units" : "default",
+         "alias" : "HTTPS_NumResDeclined",
+         "statkey" : "HTTPS_NumResDeclined",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Connections which are in the process of being setup.",
+         "units" : "default",
+         "alias" : "HTTPS_NumHalfOpen",
+         "statkey" : "HTTPS_NumHalfOpen",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Number of connections which are currently active.",
+         "units" : "default",
+         "alias" : "HTTPS_NumActive",
+         "statkey" : "HTTPS_NumActive",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Connections which were active but which were since normally terminated.",
+         "units" : "default",
+         "alias" : "HTTPS_NumExpired",
+         "statkey" : "HTTPS_NumExpired",
+         "datatype" : "float"
+      },
+      {
+         "description" : "connections which were active but which were aborted due to reasons of policy or resource rationing",
+         "units" : "default",
+         "alias" : "HTTPS_NumAborted",
+         "statkey" : "HTTPS_NumAborted",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Averaged number of connections establishing per second over the last minute",
+         "units" : "default",
+         "alias" : "HTTPS_SetupRate1",
+         "statkey" : "HTTPS_SetupRate1",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Averaged number of connections establishing per second over the last 5 minutes",
+         "units" : "default",
+         "alias" : "HTTPS_SetupRate5",
+         "statkey" : "HTTPS_SetupRate5",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Number of connections which are attempted to be set up.",
+         "units" : "default",
+         "alias" : "DNS_NumAttempted",
+         "statkey" : "DNS_NumAttempted",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Number of connection setup attempts that were aborted.",
+         "units" : "default",
+         "alias" : "DNS_NumSetupsAborted",
+         "statkey" : "DNS_NumSetupsAborted",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Number of connection setup attempts that were declined due to security.",
+         "units" : "default",
+         "alias" : "DNS_NumPolicyDeclined",
+         "statkey" : "DNS_NumPolicyDeclined",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Number of connection setup attempts that were declined du to non-availability of required resources.",
+         "units" : "default",
+         "alias" : "DNS_NumResDeclined",
+         "statkey" : "DNS_NumResDeclined",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Connections which are in the process of being setup.",
+         "units" : "default",
+         "alias" : "DNS_NumHalfOpen",
+         "statkey" : "DNS_NumHalfOpen",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Number of connections which are currently active.",
+         "units" : "default",
+         "alias" : "DNS_NumActive",
+         "statkey" : "DNS_NumActive",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Connections which were active but which were since normally terminated.",
+         "units" : "default",
+         "alias" : "DNS_NumExpired",
+         "statkey" : "DNS_NumExpired",
+         "datatype" : "float"
+      },
+      {
+         "description" : "connections which were active but which were aborted due to reasons of policy or resource rationing",
+         "units" : "default",
+         "alias" : "DNS_NumAborted",
+         "statkey" : "DNS_NumAborted",
+         "datatype" : "float"
+      },
+      {
+         "description" : "Averaged number of connections establishing per second over the last minute",
+         "units" : "default",
+         "alias" : "DNS_SetupRate1",
+         "statkey" : "DNS_SetupRate1",
+         "datatype" : "bigint"
+      },
+      {
+         "description" : "Averaged number of connections establishing per second over the last 5 minutes",
+         "units" : "default",
+         "alias" : "DNS_SetupRate5",
+         "statkey" : "DNS_SetupRate5",
+         "datatype" : "bigint"
+      }
+   ],
+   "chart" : [
+      {
+         "title" : "Global Connection Events",
+         "options" : {
+            "chart-type" : "line",
+            "series" : [
+               {
+                  "name" : "GCNumAttempted",
+                  "color" : "#339900"
+               },
+               {
+                  "name" : "GCNumSetupsAborted",
+                  "color" : "#666666"
+               },
+               {
+                  "name" : "GCNumPolicyDeclined",
+                  "color" : "#FF0000"
+               },
+               {
+                  "name" : "GCNumResDeclined",
+                  "color" : "#990000"
+               },
+               {
+                  "name" : "GCNumExpired",
+                  "color" : "#cc3399"
+               },
+               {
+                  "name" : "GCNumAborted",
+                  "color" : "#9933cc"
+               }
+            ],
+            "units" : "default",
+            "ylabel" : "Events/s"
+         },
+         "id" : "1"
+      },
+      {
+         "title" : "Global Connection Statistics",
+         "options" : {
+            "chart-type" : "line",
+            "series" : [
+               {
+                  "name" : "GCNumActive",
+                  "color" : "#339900"
+               },
+               {
+                  "name" : "GCNumHalfOpen",
+                  "color" : "#666666"
+               },
+               {
+                  "name" : "GCNumEmbryonic",
+                  "color" : "#FF0000"
+               },
+               {
+                  "name" : "GCNumRemoteAccess",
+                  "color" : "#990000"
+               },
+               {
+                  "name" : "GCSetupRate1",
+                  "color" : "#cc3399"
+               },
+               {
+                  "name" : "GCSetupRate5",
+                  "color" : "#9933cc"
+               }
+            ],
+            "units" : "default",
+            "ylabel" : "Connections"
+         },
+         "id" : "2"
+      },
+      {
+         "title" : "ICMP Connection Events",
+         "options" : {
+            "chart-type" : "line",
+            "series" : [
+               {
+                  "name" : "ICMP_NumAttempted",
+                  "color" : "#339900"
+               },
+               {
+                  "name" : "ICMP_NumSetupsAborted",
+                  "color" : "#666666"
+               },
+               {
+                  "name" : "ICMP_NumPolicyDeclined",
+                  "color" : "#FF0000"
+               },
+               {
+                  "name" : "ICMP_NumResDeclined",
+                  "color" : "#990000"
+               },
+               {
+                  "name" : "ICMP_NumExpired",
+                  "color" : "#cc3399"
+               },
+               {
+                  "name" : "ICMP_NumAborted",
+                  "color" : "#9933cc"
+               }
+            ],
+            "units" : "default",
+            "ylabel" : "Events/s"
+         },
+         "id" : "3"
+      },
+      {
+         "title" : "ICMP Connection Statistics",
+         "options" : {
+            "chart-type" : "line",
+            "series" : [
+               {
+                  "name" : "ICMP_NumActive",
+                  "color" : "#339900"
+               },
+               {
+                  "name" : "ICMP_NumHalfOpen",
+                  "color" : "#666666"
+               },
+               {
+                  "name" : "ICMP_SetupRate1",
+                  "color" : "#cc3399"
+               },
+               {
+                  "name" : "ICMP_SetupRate5",
+                  "color" : "#9933cc"
+               }
+            ],
+            "units" : "default",
+            "ylabel" : "Connections"
+         },
+         "id" : "4"
+      },
+      {
+         "title" : "TCP Connection Events",
+         "options" : {
+            "chart-type" : "line",
+            "series" : [
+               {
+                  "name" : "TCP_NumAttempted",
+                  "color" : "#339900"
+               },
+               {
+                  "name" : "TCP_NumSetupsAborted",
+                  "color" : "#666666"
+               },
+               {
+                  "name" : "TCP_NumPolicyDeclined",
+                  "color" : "#FF0000"
+               },
+               {
+                  "name" : "TCP_NumResDeclined",
+                  "color" : "#990000"
+               },
+               {
+                  "name" : "TCP_NumExpired",
+                  "color" : "#cc3399"
+               },
+               {
+                  "name" : "TCP_NumAborted",
+                  "color" : "#9933cc"
+               }
+            ],
+            "units" : "default",
+            "ylabel" : "Events/s"
+         },
+         "id" : "5"
+      },
+      {
+         "title" : "TCP Connection Statistics",
+         "options" : {
+            "chart-type" : "line",
+            "series" : [
+               {
+                  "name" : "TCP_NumActive",
+                  "color" : "#339900"
+               },
+               {
+                  "name" : "TCP_NumHalfOpen",
+                  "color" : "#666666"
+               },
+               {
+                  "name" : "TCP_SetupRate1",
+                  "color" : "#cc3399"
+               },
+               {
+                  "name" : "TCP_SetupRate5",
+                  "color" : "#9933cc"
+               }
+            ],
+            "units" : "default",
+            "ylabel" : "Connections"
+         },
+         "id" : "6"
+      },
+      {
+         "title" : "UDP Connection Events",
+         "options" : {
+            "chart-type" : "line",
+            "series" : [
+               {
+                  "name" : "UDP_NumAttempted",
+                  "color" : "#339900"
+               },
+               {
+                  "name" : "UDP_NumSetupsAborted",
+                  "color" : "#666666"
+               },
+               {
+                  "name" : "UDP_NumPolicyDeclined",
+                  "color" : "#FF0000"
+               },
+               {
+                  "name" : "UDP_NumResDeclined",
+                  "color" : "#990000"
+               },
+               {
+                  "name" : "UDP_NumExpired",
+                  "color" : "#cc3399"
+               },
+               {
+                  "name" : "UDP_NumAborted",
+                  "color" : "#9933cc"
+               }
+            ],
+            "units" : "default",
+            "ylabel" : "Events/s"
+         },
+         "id" : "7"
+      },
+      {
+         "title" : "UDP Connection Statistics",
+         "options" : {
+            "chart-type" : "line",
+            "series" : [
+               {
+                  "name" : "UDP_NumActive",
+                  "color" : "#339900"
+               },
+               {
+                  "name" : "UDP_NumHalfOpen",
+                  "color" : "#666666"
+               },
+               {
+                  "name" : "UDP_SetupRate1",
+                  "color" : "#cc3399"
+               },
+               {
+                  "name" : "UDP_SetupRate5",
+                  "color" : "#9933cc"
+               }
+            ],
+            "units" : "default",
+            "ylabel" : "Connections"
+         },
+         "id" : "8"
+      },
+      {
+         "title" : "HTTP Connection Events",
+         "options" : {
+            "chart-type" : "line",
+            "series" : [
+               {
+                  "name" : "HTTP_NumAttempted",
+                  "color" : "#339900"
+               },
+               {
+                  "name" : "HTTP_NumSetupsAborted",
+                  "color" : "#666666"
+               },
+               {
+                  "name" : "HTTP_NumPolicyDeclined",
+                  "color" : "#FF0000"
+               },
+               {
+                  "name" : "HTTP_NumResDeclined",
+                  "color" : "#990000"
+               },
+               {
+                  "name" : "HTTP_NumExpired",
+                  "color" : "#cc3399"
+               },
+               {
+                  "name" : "HTTP_NumAborted",
+                  "color" : "#9933cc"
+               }
+            ],
+            "units" : "default",
+            "ylabel" : "Events/s"
+         },
+         "id" : "9"
+      },
+      {
+         "title" : "HTTP Connection Statistics",
+         "options" : {
+            "chart-type" : "line",
+            "series" : [
+               {
+                  "name" : "HTTP_NumActive",
+                  "color" : "#339900"
+               },
+               {
+                  "name" : "HTTP_NumHalfOpen",
+                  "color" : "#666666"
+               },
+               {
+                  "name" : "HTTP_SetupRate1",
+                  "color" : "#cc3399"
+               },
+               {
+                  "name" : "HTTP_SetupRate5",
+                  "color" : "#9933cc"
+               }
+            ],
+            "units" : "default",
+            "ylabel" : "Connections"
+         },
+         "id" : "10"
+      },
+      {
+         "title" : "HTTPS Connection Events",
+         "options" : {
+            "chart-type" : "line",
+            "series" : [
+               {
+                  "name" : "HTTPS_NumAttempted",
+                  "color" : "#339900"
+               },
+               {
+                  "name" : "HTTPS_NumSetupsAborted",
+                  "color" : "#666666"
+               },
+               {
+                  "name" : "HTTPS_NumPolicyDeclined",
+                  "color" : "#FF0000"
+               },
+               {
+                  "name" : "HTTPS_NumResDeclined",
+                  "color" : "#990000"
+               },
+               {
+                  "name" : "HTTPS_NumExpired",
+                  "color" : "#cc3399"
+               },
+               {
+                  "name" : "HTTPS_NumAborted",
+                  "color" : "#9933cc"
+               }
+            ],
+            "units" : "default",
+            "ylabel" : "Events/s"
+         },
+         "id" : "11"
+      },
+      {
+         "title" : "HTTPS Connection Statistics",
+         "options" : {
+            "chart-type" : "line",
+            "series" : [
+               {
+                  "name" : "HTTPS_NumActive",
+                  "color" : "#339900"
+               },
+               {
+                  "name" : "HTTPS_NumHalfOpen",
+                  "color" : "#666666"
+               },
+               {
+                  "name" : "HTTPS_SetupRate1",
+                  "color" : "#cc3399"
+               },
+               {
+                  "name" : "HTTPS_SetupRate5",
+                  "color" : "#9933cc"
+               }
+            ],
+            "units" : "default",
+            "ylabel" : "Connections"
+         },
+         "id" : "12"
+      },
+      {
+         "title" : "DNS Connection Events",
+         "options" : {
+            "chart-type" : "line",
+            "series" : [
+               {
+                  "name" : "DNS_NumAttempted",
+                  "color" : "#339900"
+               },
+               {
+                  "name" : "DNS_NumSetupsAborted",
+                  "color" : "#666666"
+               },
+               {
+                  "name" : "DNS_NumPolicyDeclined",
+                  "color" : "#FF0000"
+               },
+               {
+                  "name" : "DNS_NumResDeclined",
+                  "color" : "#990000"
+               },
+               {
+                  "name" : "DNS_NumExpired",
+                  "color" : "#cc3399"
+               },
+               {
+                  "name" : "DNS_NumAborted",
+                  "color" : "#9933cc"
+               }
+            ],
+            "units" : "default",
+            "ylabel" : "Events/s"
+         },
+         "id" : "13"
+      },
+      {
+         "title" : "DNS Connection Statistics",
+         "options" : {
+            "chart-type" : "line",
+            "series" : [
+               {
+                  "name" : "DNS_NumActive",
+                  "color" : "#339900"
+               },
+               {
+                  "name" : "DNS_NumHalfOpen",
+                  "color" : "#666666"
+               },
+               {
+                  "name" : "DNS_SetupRate1",
+                  "color" : "#cc3399"
+               },
+               {
+                  "name" : "DNS_SetupRate5",
+                  "color" : "#9933cc"
+               }
+            ],
+            "units" : "default",
+            "ylabel" : "Connections"
+         },
+         "id" : "14"
+      }
+   ],
+   "plugin" : {
+      "datatype" : "statistic",
+      "command" : "check-snmp-cisco-fw",
+      "prefer" : "localhost",
+      "description" : "Monitor the firewall of a Cisco Router.",
+      "abstract" : "Cisco Firewall check",
+      "plugin" : "SNMP.Cisco.Fw",
+      "id" : "10008",
+      "info" : {
+         "examples" : [
+            {
+               "command_line" : "check-snmp-cisco-fw --warning 'GCNumEmbryonic:lt:6' --critical 'GCSetupRate1:ge:2000'",
+               "arguments" : [
+                  "warning",
+                  "GCNumEmbryonic:lt:6",
+                  "critical",
+                  "GCSetupRate1:ge:2000"
+               ],
+               "description" : [
+                  "A simple example to check the connection state and trigger a warning if Embryonic application layer connections is lower than 6 or trigger a critical if the connection setup rate is higher than 2000 per minute:"
+               ]
+            }
+         ],
+         "flags" : "",
+         "version" : "0.1",
+         "thresholds" : {
+            "options" : [
+               {
+                  "unit" : "bytes",
+                  "key" : "GCNumAttempted"
+               },
+               {
+                  "unit" : "bytes",
+                  "key" : "GCNumSetupsAborted"
+               },
+               {
+                  "key" : "GCNumPolicyDeclined",
+                  "unit" : "bytes"
+               },
+               {
+                  "unit" : "bytes",
+                  "key" : "GCNumResDeclined"
+               },			   
+               {
+                  "key" : "GCNumHalfOpen",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "GCNumActive",
+                  "unit" : "bytes"
+               },
+               {
+                  "unit" : "bytes",
+                  "key" : "GCNumExpired"
+               },
+               {
+                  "unit" : "bytes",
+                  "key" : "GCNumAborted"
+               },
+               {
+                  "key" : "GCNumEmbryonic",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "GCSetupRate1",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "GCSetupRate5",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "GCNumRemoteAccess",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "ICMP_NumAttempted",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "ICMP_NumSetupsAborted",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "ICMP_NumPolicyDeclined",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "ICMP_NumResDeclined",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "ICMP_NumHalfOpen",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "ICMP_NumActive",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "ICMP_NumExpired",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "ICMP_NumAborted",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "ICMP_SetupRate1",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "ICMP_SetupRate5",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "TCP_NumAttempted",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "TCP_NumSetupsAborted",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "TCP_NumPolicyDeclined",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "TCP_NumResDeclined",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "TCP_NumHalfOpen",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "TCP_NumActive",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "TCP_NumExpired",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "TCP_NumAborted",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "TCP_SetupRate1",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "TCP_SetupRate5",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "UDP_NumAttempted",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "UDP_NumSetupsAborted",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "UDP_NumPolicyDeclined",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "UDP_NumResDeclined",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "UDP_NumHalfOpen",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "UDP_NumActive",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "UDP_NumExpired",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "UDP_NumAborted",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "UDP_SetupRate1",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "UDP_SetupRate5",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "HTTP_NumAttempted",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "HTTP_NumSetupsAborted",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "HTTP_NumPolicyDeclined",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "HTTP_NumResDeclined",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "HTTP_NumHalfOpen",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "HTTP_NumActive",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "HTTP_NumExpired",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "HTTP_NumAborted",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "HTTP_SetupRate1",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "HTTP_SetupRate5",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "HTTPS_NumAttempted",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "HTTPS_NumSetupsAborted",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "HTTPS_NumPolicyDeclined",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "HTTPS_NumResDeclined",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "HTTPS_NumHalfOpen",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "HTTPS_NumActive",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "HTTPS_NumExpired",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "HTTPS_NumAborted",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "HTTPS_SetupRate1",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "HTTPS_SetupRate5",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "DNS_NumAttempted",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "DNS_NumSetupsAborted",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "DNS_NumPolicyDeclined",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "DNS_NumResDeclined",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "DNS_NumHalfOpen",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "DNS_NumActive",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "DNS_NumExpired",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "DNS_NumAborted",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "DNS_SetupRate1",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "DNS_SetupRate5",
+                  "unit" : "bytes"
+               }
+            ],
+            "info" : [
+               "How to set warning and critical thresholds:\n\n",
+               "  It's possible to set thresholds for one or more statistic keys.\n",
+               "  The format to add a threshold for a statistic key is:\n\n",
+               "    key:operator:threshold\n\n",
+               "  or if a unit makes sense\n\n",
+               "    key:operator:threshold + UNIT\n\n",
+               "  where the unit can be in ",
+               "bytes or percent",
+               ".\n\n",
+               "  If no operator is set then the default operator is 'ge'.\n\n",
+               "  The following operators are available:\n\n",
+               "    lt = less than\n",
+               "    le = less than or equal\n",
+               "    gt = greater than\n",
+               "    ge = greater than or equal\n",
+               "    eq = equal\n",
+               "    ne = not equal\n",
+               "\n",
+               "  Allowed units for bytes:\n\n",
+               "    KB = Kilobytes   TB = Terabytes   ZB = Zettabytes\n",
+               "    MB = Megabytes   PB = Petabytes   YB = Yottabytes\n",
+               "    GB = Gigabytes   EB = Exabytes\n\n",
+               "  Allowed units for percent: %\n\n"
+            ]
+         },
+         "plugin" : "check-snmp-cisco-fw",
+         "options" : [
+            {
+               "value_desc" : "hostname or ip address",
+               "value_type" : "string",
+               "description" : "A hostname or IP address to connect to.",
+               "name" : "Hostname or IP address",
+               "multiple" : 0,
+               "mandatory" : 0,
+               "option" : "host",
+               "default" : "127.0.0.1"
+            },
+            {
+               "option" : "port",
+               "mandatory" : 0,
+               "default" : 161,
+               "name" : "Port number",
+               "description" : "A port number to connect to.",
+               "value_type" : "int",
+               "value_desc" : "port",
+               "multiple" : 0
+            },
+            {
+               "multiple" : 0,
+               "name" : "SNMP community",
+               "description" : "The SNMP community to connect to the host.",
+               "value_type" : "string",
+               "value_desc" : "community",
+               "default" : "public",
+               "option" : "community",
+               "mandatory" : 0
+            },
+            {
+               "default" : 2,
+               "mandatory" : 0,
+               "option" : "snmp-version",
+               "multiple" : 0,
+               "description" : "The SNMP version to use to connect to the host.",
+               "name" : "SNMP version",
+               "value_desc" : "version",
+               "value_type" : "string"
+            },
+            {
+               "value_desc" : "username",
+               "value_type" : "string",
+               "description" : "The SNMPv3 username.",
+               "name" : "SNMPv3 username",
+               "multiple" : 0,
+               "mandatory" : 0,
+               "option" : "username",
+               "default" : null
+            },
+            {
+               "multiple" : 0,
+               "value_type" : "string",
+               "value_desc" : "authkey",
+               "name" : "SNMPv3 auth key",
+               "description" : "The SNMPv3 auth key.",
+               "default" : null,
+               "option" : "authkey",
+               "mandatory" : 0
+            },
+            {
+               "default" : null,
+               "option" : "authpassword",
+               "mandatory" : 0,
+               "multiple" : 0,
+               "name" : "SNMPv3 auth password",
+               "description" : "The SNMPv3 auth password.",
+               "value_type" : "string",
+               "value_desc" : "authpassword"
+            },
+            {
+               "default" : null,
+               "mandatory" : 0,
+               "option" : "authprotocol",
+               "multiple" : 0,
+               "description" : "The SNMPv3 auth protocol.",
+               "name" : "SNMPv3 auth protocol",
+               "value_desc" : "authprotocol",
+               "value_type" : "string"
+            },
+            {
+               "multiple" : 0,
+               "description" : "The SNMPv3 priv key.",
+               "name" : "SNMPv3 priv key",
+               "value_desc" : "privkey",
+               "value_type" : "string",
+               "default" : null,
+               "mandatory" : 0,
+               "option" : "privkey"
+            },
+            {
+               "multiple" : 0,
+               "value_desc" : "privpassword",
+               "value_type" : "string",
+               "description" : "The SNMPv3 priv password.",
+               "name" : "SNMPv3 priv password",
+               "default" : null,
+               "mandatory" : 0,
+               "option" : "privpassword"
+            },
+            {
+               "multiple" : 0,
+               "name" : "SNMPv3 priv protocol",
+               "description" : "The SNMPv3 priv protocol.",
+               "value_type" : "string",
+               "value_desc" : "privprotocol",
+               "default" : null,
+               "option" : "privprotocol",
+               "mandatory" : 0
+            },
+            {
+               "mandatory" : 0,
+               "option" : "warning",
+               "default" : null,
+               "description" : "This is the warning threshold. When the value exceeds the threshold a warning status is triggered. Please see the examples for more information.",
+               "name" : "Warning threshold",
+               "value_desc" : "key:value or key:op:value",
+               "value_type" : "string",
+               "multiple" : 1
+            },
+            {
+               "option" : "critical",
+               "mandatory" : 0,
+               "default" : null,
+               "name" : "Critical threshold",
+               "description" : "This is the critical threshold. When the value exceeds the threshold a critical status is triggered. Please see the examples for more information.",
+               "value_type" : "string",
+               "value_desc" : "key:value or key:op:value",
+               "multiple" : 1
+            }
+         ]
+      },
+      "netaccess" : "yes",
+      "category" : "System,SNMP"
+   }
+}

@@ -1,0 +1,328 @@
+#!/usr/bin/perl
+
+=head1 NAME
+
+check-snmp-ios-proc - Plugin to check Cisco IOS Process by snmp.
+
+=head1 SYNOPSIS
+
+    check-snmp-ios-proc[ OPTIONS ]
+
+    check-snmp-ios-proc --help
+
+=head1 REPORTING BUGS
+
+Please report all bugs to <support(at)bloonix.de>.
+
+=head1 AUTHOR
+
+Jonny Schulz <support(at)bloonix.de>.
+
+=head1 POWERED BY
+
+     _    __ _____ _____ __  __ __ __   __
+    | |__|  |     |     |  \|  |__|\  \/  /
+    |  . |  |  |  |  |  |      |  | >    <
+    |____|__|_____|_____|__|\__|__|/__/\__\
+
+=head1 COPYRIGHT
+
+Copyright (C) 2016 by Jonny Schulz. All rights reserved.
+
+=cut
+
+use strict;
+use warnings;
+use Bloonix::Plugin;
+use Fcntl qw(:flock :DEFAULT);
+use Net::SNMP;
+
+# --------------------------------------------------
+# Plugin options
+# --------------------------------------------------
+
+my $plugin = Bloonix::Plugin->new(version => "0.3");
+
+$plugin->example(
+    description => "Monitor the process of a Cisco IOS Device:",
+    arguments => [
+        process => "IP Input",
+        host => "127.0.0.1",
+        port => 161,
+        community => "public",
+        "snmp-version" => 1
+    ]
+);
+
+$plugin->add_option(
+    name => "Process Name",
+    option => "process",
+    value => "process",
+    value_type => "string",
+    mandatory => 1,
+    description => join(" ",
+        "This is the process you want to check. The process name should",
+        "be the full name from 1.3.6.1.4.1.9.9.109.1.2.1.1.2"
+    )
+);
+
+$plugin->has_snmp;
+$plugin->has_debug;
+
+$plugin->has_threshold(
+    keys => [
+        { key => "MemAllocated", unit => "bytes" },
+        { key => "MemFreed", unit => "bytes" },
+        { key => "Invoked" },
+        { key => "Runtime" },
+        { key => "Util5Sec", unit => "percent" },
+        { key => "Util1Min", unit => "percent" },
+        { key => "Util5Min", unit => "percent" }
+    ]
+);
+
+
+$plugin->add_option(
+    name => "Debug",
+    option => "debug",
+    description => "Turn on debugging. Just useful if you want to test something.",
+    command_line_only => 1
+);
+
+$plugin->add_option(
+    name => "No cache",
+    option => "no-cache",
+    description => "Do not cache SNMP results for 10 seconds.",
+    command_line_only => 1
+);
+
+# --------------------------------------------------
+# Parse options
+# --------------------------------------------------
+
+my $opt = $plugin->parse_options;
+
+# --------------------------------------------------
+# Some OIDs
+# --------------------------------------------------
+
+# Base table oids
+my $proc_name_base = "1.3.6.1.4.1.9.9.109.1.2.1.1.2.1";
+my $proc_base      = "1.3.6.1.4.1.9.9.109.1.2.3";
+
+# Some basics, in/out discards and errros
+my %proc_basics = (
+    Util5Sec => "1.3.6.1.4.1.9.9.109.1.2.3.1.5.1",
+    Util1Min => "1.3.6.1.4.1.9.9.109.1.2.3.1.6.1",
+    Util5Min => "1.3.6.1.4.1.9.9.109.1.2.3.1.7.1",
+    Priority => "1.3.6.1.4.1.9.9.109.1.2.3.1.8.1"
+);
+
+
+# counters
+my %proc_counters = (
+    MemAllocated => "1.3.6.1.4.1.9.9.109.1.2.3.1.1.1",
+    MemFreed     => "1.3.6.1.4.1.9.9.109.1.2.3.1.2.1",
+    Invoked      => "1.3.6.1.4.1.9.9.109.1.2.3.1.3.1",
+    Runtime      => "1.3.6.1.4.1.9.9.109.1.2.3.1.4.1"
+);
+
+# 1.3.6.1.4.1.9.9.109.1.2.3.1.8.1 -> cpmProcExtPriorityRev
+my $proc_priority = {
+    1 => "critical",
+    2 => "high",
+    3 => "normal",
+    4 => "low",
+    5 => "notAssigned"
+};
+
+# --------------------------------------------------
+# Get cached or latest SNMP data
+# --------------------------------------------------
+
+my ($proc_result, $proc_names);
+my ($connection_string, $cache_file, $file_stat, $time, $data);
+
+$connection_string = join("_", "bloonix-check-snmp-ios-proc-cache", $opt->{host}, $opt->{community}, $opt->{port});
+$connection_string =~ s/\W/_/g;
+$cache_file = join("/", $plugin->plugin_libdir, $connection_string);
+$cache_file .= ".json";
+$file_stat = [ stat($cache_file) ];
+
+#system("cat $cache_file");
+sysopen my $fh, $cache_file, O_RDWR | O_CREAT or do {
+    $plugin->exit(
+        status => "UNKNOWN",
+        message => "unable to open file '$cache_file' - $!"
+    );
+};
+
+flock($fh, LOCK_EX);
+
+if ($file_stat->[7]) {
+    my $rest = $file_stat->[7];
+    my $offset = 0;
+    my $done = 0;
+
+    while ($rest > 0) {
+        my $len = sysread($fh, my $buf, $rest, $offset);
+
+        if (!defined $len) {
+            next if $! =~ /^Interrupted/;
+            $plugin->exit(
+                status => "UNKNOWN",
+                message => "unable to read from file '$cache_file' - $!"
+            );
+        }
+
+        $data .= $buf;
+        $rest -= $len;
+        $offset += $len;
+    }
+}
+
+if (!$opt->{no_cache} && defined $file_stat->[10] && $file_stat->[10] + 10 >= time && $data && $data =~ /^{.+}$/) {
+    $data = JSON->new->decode($data);
+    $proc_names = $data->{proc}->{names};
+    $proc_result = $data->{proc}->{result};
+    $time = $data->{time};
+} else {
+    my $snmp = $plugin->start_snmp_session;
+    $snmp->max_msg_size(65535);
+    $proc_result = $snmp->get_table($proc_base);
+    $proc_names = $snmp->get_table($proc_name_base);
+    $time = time;
+
+    sysseek $fh, 0, 0;
+
+    $data = JSON->new->encode({
+        time => $time,
+        proc => {
+            names => $proc_names,
+            result => $proc_result,
+        }
+    });
+
+    my $rest = length $data;
+    my $offset = 0;
+
+    while ($rest) {
+        my $written = syswrite $fh, $data, $rest, $offset;
+
+        if (!defined $written) {
+            die "system write error: $!";
+        } elsif ($written) {
+            $rest -= $written;
+            $offset += $written;
+        }
+    }
+
+    truncate $fh, length $data;
+}
+
+close $fh;
+
+if (!defined $proc_result) {
+    $plugin->exit(
+        status => "CRITICAL",
+        message => "unable to get oid table from host $opt->{host}\n"
+    );
+}
+
+# --------------------------------------------------
+# Let's have a look for the pid of the process
+# --------------------------------------------------
+
+my $pid;
+my $search = $proc_names;
+
+foreach my $oid (keys %$search) {
+    if ($oid =~ /(\d+)\z/) {
+        my $pid_num = $1;
+
+        if ($opt->{debug}) {
+            print STDERR ">> found process $oid -> $search->{$oid}\n";
+        }
+
+        if ($opt->{process} =~ /^\d+\z/) {
+            if ($opt->{process} eq $pid_num) {
+                $pid = $pid_num;
+            }
+        } elsif ($search->{$oid} eq $opt->{process}) {
+            $pid = $pid_num;
+        }
+
+        if (defined $pid) {
+            if ($opt->{debug}) {
+                print STDERR ">> process $pid $search->{$oid} matched\n";
+            }
+            last;
+        }
+    }
+}
+
+if (!$pid) {
+    $plugin->exit(
+        status => "UNKNOWN",
+        message => "process $opt->{process} does not exists"
+    );
+}
+
+# --------------------------------------------------
+# Fetch the statistics from the snmp result
+# --------------------------------------------------
+
+my $stat = { };
+
+foreach my $key (keys %proc_basics) {
+    my $oid = $proc_basics{$key};
+    if (!exists $proc_result->{"$oid.$pid"}) {
+        $plugin->exit(
+            status => "UNKOWN",
+            message => "oid $oid.$pid does not exists"
+        );
+    }
+    $stat->{$key} = $proc_result->{"$oid.$pid"};
+}
+
+my ($counters, $result);
+
+
+    $counters = \%proc_counters;
+    $result = $proc_result;
+
+
+foreach my $key (keys %$counters) {
+    my $oid = $counters->{$key};
+    if (!exists $result->{"$oid.$pid"} && $key !~ /nucast/) {
+        $plugin->exit(
+            status => "UNKOWN",
+            message => "oid $oid.$pid does not exists"
+        );
+    }
+    $stat->{$key} = $result->{"$oid.$pid"} || 0;
+}
+
+$stat->{Priority} = $proc_priority->{ $stat->{Priority} };
+#delete $stat->{descr};
+
+my %delta_keys = (%proc_counters);
+
+foreach my $key (keys %delta_keys) {
+    if (!exists $stat->{$key}) {
+        $stat->{$key} = 0;
+    }
+}
+
+$plugin->delta(time => $time, stat => $stat, keys => [ keys %delta_keys ]);
+
+# --------------------------------------------------
+# Check thresholds
+# --------------------------------------------------
+
+
+$plugin->check_thresholds(
+    stats => $stat,
+    upshot_keys => [qw(Util1Min Runtime Priority)],
+    exit => "yes"
+);

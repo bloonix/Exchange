@@ -1,0 +1,525 @@
+{
+   "plugin" : {
+      "netaccess" : "yes",
+      "description" : "Monitor CPU and memory statistics of a Cisco IOS device",
+      "datatype" : "statistic",
+      "category" : "Network,SNMP",
+      "prefer" : "localhost",
+      "info" : {
+         "examples" : [
+            {
+               "command_line" : "check-snmp-cisco-ios-system-stats --host '127.0.0.1' --port '161' --community 'public' --snmp-version '1'",
+               "arguments" : [
+                  "host",
+                  "127.0.0.1",
+                  "port",
+                  161,
+                  "community",
+                  "public",
+                  "snmp-version",
+                  1
+               ],
+               "description" : [
+                  "CPU and memory statistics of a Cisco IOS device:"
+               ]
+            }
+         ],
+         "flags" : "",
+         "version" : "0.1",
+         "thresholds" : {
+            "options" : [
+               {
+                  "key" : "CPUTotal5sec",
+                  "unit" : "percent"
+               },
+               {
+                  "unit" : "percent",
+                  "key" : "CPUTotal1min"
+               },
+               {
+                  "unit" : "percent",
+                  "key" : "CPUTotal5min"
+               },
+               {
+                  "key" : "CPUInterrupt",
+                  "unit" : "percent"
+               },
+               {
+                  "key" : "CPUMemUsed",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "CPUMemFree",
+                  "unit" : "bytes"
+               },
+               {
+                  "key" : "CPUMemLargestFree",
+                  "unit" : "bytes"
+               },
+               {
+                  "unit" : "bytes",
+                  "key" : "IOMemUsed"
+               },
+               {
+                  "unit" : "bytes",
+                  "key" : "IOMemFree"
+               },
+               {
+                  "unit" : "bytes",
+                  "key" : "IOMemLargestFree"
+               },
+               {
+                  "unit" : "percent",
+                  "key" : "CPUMemUsedPercent"
+               },
+               {
+                  "unit" : "percent",
+                  "key" : "CPUMemFreePercent"
+               },
+               {
+                  "unit" : "percent",
+                  "key" : "IOMemUsedPercent"
+               },
+               {
+                  "key" : "IOMemFreePercent",
+                  "unit" : "percent"
+               }
+            ],
+            "info" : [
+               "How to set warning and critical thresholds:\n\n",
+               "  It's possible to set thresholds for one or more statistic keys.\n",
+               "  The format to add a threshold for a statistic key is:\n\n",
+               "    key:operator:threshold\n\n",
+               "  or if a unit makes sense\n\n",
+               "    key:operator:threshold + UNIT\n\n",
+               "  where the unit can be in ",
+               "percent or bytes",
+               ".\n\n",
+               "  If no operator is set then the default operator is 'ge'.\n\n",
+               "  The following operators are available:\n\n",
+               "    lt = less than\n",
+               "    le = less than or equal\n",
+               "    gt = greater than\n",
+               "    ge = greater than or equal\n",
+               "    eq = equal\n",
+               "    ne = not equal\n",
+               "\n",
+               "  Allowed units for percent: %\n\n",
+               "  Allowed units for bytes:\n\n",
+               "    KB = Kilobytes   TB = Terabytes   ZB = Zettabytes\n",
+               "    MB = Megabytes   PB = Petabytes   YB = Yottabytes\n",
+               "    GB = Gigabytes   EB = Exabytes\n\n"
+            ]
+         },
+         "options" : [
+            {
+               "name" : "Hostname or IP address",
+               "value_desc" : "hostname or ip address",
+               "mandatory" : 0,
+               "value_type" : "string",
+               "description" : "A hostname or IP address to connect to.",
+               "option" : "host",
+               "multiple" : 0,
+               "default" : "127.0.0.1"
+            },
+            {
+               "multiple" : 0,
+               "default" : 161,
+               "value_type" : "int",
+               "description" : "A port number to connect to.",
+               "option" : "port",
+               "value_desc" : "port",
+               "name" : "Port number",
+               "mandatory" : 0
+            },
+            {
+               "multiple" : 0,
+               "default" : "public",
+               "name" : "SNMP community",
+               "mandatory" : 0,
+               "value_desc" : "community",
+               "value_type" : "string",
+               "option" : "community",
+               "description" : "The SNMP community to connect to the host."
+            },
+            {
+               "multiple" : 0,
+               "default" : 2,
+               "value_type" : "string",
+               "description" : "The SNMP version to use to connect to the host.",
+               "option" : "snmp-version",
+               "name" : "SNMP version",
+               "value_desc" : "version",
+               "mandatory" : 0
+            },
+            {
+               "name" : "SNMPv3 username",
+               "mandatory" : 0,
+               "value_desc" : "username",
+               "value_type" : "string",
+               "description" : "The SNMPv3 username.",
+               "option" : "username",
+               "multiple" : 0,
+               "default" : null
+            },
+            {
+               "default" : null,
+               "multiple" : 0,
+               "value_desc" : "authkey",
+               "name" : "SNMPv3 auth key",
+               "mandatory" : 0,
+               "description" : "The SNMPv3 auth key.",
+               "option" : "authkey",
+               "value_type" : "string"
+            },
+            {
+               "default" : null,
+               "multiple" : 0,
+               "description" : "The SNMPv3 auth password.",
+               "option" : "authpassword",
+               "value_type" : "string",
+               "value_desc" : "authpassword",
+               "mandatory" : 0,
+               "name" : "SNMPv3 auth password"
+            },
+            {
+               "default" : null,
+               "multiple" : 0,
+               "name" : "SNMPv3 auth protocol",
+               "mandatory" : 0,
+               "value_desc" : "authprotocol",
+               "option" : "authprotocol",
+               "description" : "The SNMPv3 auth protocol.",
+               "value_type" : "string"
+            },
+            {
+               "multiple" : 0,
+               "default" : null,
+               "name" : "SNMPv3 priv key",
+               "value_desc" : "privkey",
+               "mandatory" : 0,
+               "value_type" : "string",
+               "option" : "privkey",
+               "description" : "The SNMPv3 priv key."
+            },
+            {
+               "default" : null,
+               "multiple" : 0,
+               "name" : "SNMPv3 priv password",
+               "mandatory" : 0,
+               "value_desc" : "privpassword",
+               "description" : "The SNMPv3 priv password.",
+               "option" : "privpassword",
+               "value_type" : "string"
+            },
+            {
+               "multiple" : 0,
+               "default" : null,
+               "value_type" : "string",
+               "description" : "The SNMPv3 priv protocol.",
+               "option" : "privprotocol",
+               "name" : "SNMPv3 priv protocol",
+               "value_desc" : "privprotocol",
+               "mandatory" : 0
+            },
+            {
+               "default" : null,
+               "multiple" : 1,
+               "name" : "Warning threshold",
+               "mandatory" : 0,
+               "value_desc" : "key:value or key:op:value",
+               "description" : "This is the warning threshold. When the value exceeds the threshold a warning status is triggered. Please see the examples for more information.",
+               "option" : "warning",
+               "value_type" : "string"
+            },
+            {
+               "mandatory" : 0,
+               "name" : "Critical threshold",
+               "value_desc" : "key:value or key:op:value",
+               "option" : "critical",
+               "description" : "This is the critical threshold. When the value exceeds the threshold a critical status is triggered. Please see the examples for more information.",
+               "value_type" : "string",
+               "default" : null,
+               "multiple" : 1
+            }
+         ],
+         "plugin" : "check-snmp-cisco-ios-system-stats"
+      },
+      "id" : "10011",
+      "command" : "check-snmp-cisco-ios-system-stats",
+      "abstract" : "Cisco IOS CPU & Memory",
+      "plugin" : "SNMP.CISCO.IOS.SysStats"
+   },
+   "chart" : [
+      {
+         "id" : "1",
+         "options" : {
+            "chart-type" : "line",
+            "units" : "percent",
+            "series" : [
+               {
+                  "color" : "#005467",
+                  "name" : "CPUTotal5sec"
+               },
+               {
+                  "color" : "#ffb244",
+                  "name" : "CPUTotal1min"
+               },
+               {
+                  "color" : "#2ba743",
+                  "name" : "CPUTotal5min"
+               }
+            ],
+            "ylabel" : "percent"
+         },
+         "title" : "CPU Load"
+      },
+      {
+         "id" : "2",
+         "title" : "CPU avg 5sec - and interrupt load",
+         "options" : {
+            "series" : [
+               {
+                  "color" : "#005467",
+                  "name" : "CPUTotal5sec"
+               },
+               {
+                  "color" : "#ffb244",
+                  "name" : "CPUInterrupt"
+               }
+            ],
+            "chart-type" : "line",
+            "units" : "percent",
+            "ylabel" : "percent"
+         }
+      },
+      {
+         "id" : "3",
+         "options" : {
+            "units" : "percent",
+            "chart-type" : "area",
+            "series" : [
+               {
+                  "color" : "#005467",
+                  "name" : "IOMemFreePercent"
+               },
+               {
+                  "name" : "IOMemUsedPercent",
+                  "color" : "#ffb244"
+               }
+            ],
+            "ylabel" : "percent"
+         },
+         "title" : "IO Memory Pool Utilization"
+      },
+      {
+         "id" : "4",
+         "title" : "Processor Memory Pool Utilization",
+         "options" : {
+            "series" : [
+               {
+                  "name" : "CPUMemFreePercent",
+                  "color" : "#005467"
+               },
+               {
+                  "name" : "CPUMemUsedPercent",
+                  "color" : "#ffb244"
+               }
+            ],
+            "units" : "percent",
+            "chart-type" : "area",
+            "ylabel" : "percent"
+         }
+      },
+      {
+         "id" : "5",
+         "title" : "IO Memory Pool Usage",
+         "options" : {
+            "ylabel" : "bytes",
+            "units" : "bytes",
+            "chart-type" : "area",
+            "series" : [
+               {
+                  "name" : "IOMemFree",
+                  "color" : "#005467"
+               },
+               {
+                  "name" : "IOMemUsed",
+                  "color" : "#ffb244"
+               }
+            ]
+         }
+      },
+      {
+         "title" : "Processor Memory Pool Usage",
+         "options" : {
+            "ylabel" : "bytes",
+            "units" : "bytes",
+            "chart-type" : "area",
+            "series" : [
+               {
+                  "color" : "#005467",
+                  "name" : "CPUMemFree"
+               },
+               {
+                  "name" : "CPUMemUsed",
+                  "color" : "#ffb244"
+               }
+            ]
+         },
+         "id" : "6"
+      },
+      {
+         "options" : {
+            "ylabel" : "bytes",
+            "series" : [
+               {
+                  "name" : "IOMemLargestFree",
+                  "color" : "#005467"
+               },
+               {
+                  "color" : "#ffb244",
+                  "name" : "CPUMemLargestFree"
+               }
+            ],
+            "chart-type" : "area",
+            "units" : "bytes"
+         },
+         "title" : "Largest number of free contiguous bytes",
+         "id" : "7"
+      },
+      {
+         "id" : "8",
+         "title" : "Total number of used bytes by memory pools",
+         "options" : {
+            "ylabel" : "bytes",
+            "units" : "bytes",
+            "chart-type" : "area",
+            "series" : [
+               {
+                  "name" : "IOMemTotal",
+                  "color" : "#005467"
+               },
+               {
+                  "name" : "CPUMemTotal",
+                  "color" : "#ffb244"
+               }
+            ]
+         }
+      }
+   ],
+   "statistic" : [
+      {
+         "units" : "percent",
+         "statkey" : "CPUInterrupt",
+         "alias" : "CPUInterrupt",
+         "datatype" : "bigint",
+         "description" : "The overall CPU busy percentage in the interrupt context in the last 5 second period"
+      },
+      {
+         "description" : "Free memory of the IO pool in percent",
+         "datatype" : "bigint",
+         "alias" : "IOMemFreePercent",
+         "statkey" : "IOMemFreePercent",
+         "units" : "percent"
+      },
+      {
+         "description" : "Non utilized memory in the IO memory pool",
+         "datatype" : "bigint",
+         "alias" : "IOMemTotal",
+         "statkey" : "IOMemTotal",
+         "units" : "bytes"
+      },
+      {
+         "alias" : "CPUTotal5sec",
+         "datatype" : "bigint",
+         "description" : "The overall CPU busy percentage in the last 5 second period",
+         "units" : "percent",
+         "statkey" : "CPUTotal5sec"
+      },
+      {
+         "description" : "Total memory available in the processor pool",
+         "datatype" : "bigint",
+         "alias" : "CPUMemTotal",
+         "statkey" : "CPUMemTotal",
+         "units" : "bytes"
+      },
+      {
+         "units" : "bytes",
+         "statkey" : "IOMemFree",
+         "alias" : "IOMemFree",
+         "datatype" : "bigint",
+         "description" : "The number of bytes from the IO memory pool that are currently unused"
+      },
+      {
+         "statkey" : "CPUMemFree",
+         "units" : "bytes",
+         "description" : "The number of bytes from the processor memory pool that are currently unused",
+         "alias" : "CPUMemFree",
+         "datatype" : "bigint"
+      },
+      {
+         "alias" : "IOMemUsedPercent",
+         "datatype" : "bigint",
+         "description" : "Utilization of the IO memory pool",
+         "units" : "percent",
+         "statkey" : "IOMemUsedPercent"
+      },
+      {
+         "description" : "The largest number of contiguous bytes from the processor memory pool that are currently unused",
+         "alias" : "CPUMemLargestFree",
+         "datatype" : "bigint",
+         "statkey" : "CPUMemLargestFree",
+         "units" : "bytes"
+      },
+      {
+         "datatype" : "bigint",
+         "alias" : "CPUMemUsed",
+         "description" : "The number of bytes from the processor memory pool that are currently in use",
+         "units" : "bytes",
+         "statkey" : "CPUMemUsed"
+      },
+      {
+         "description" : "The number of bytes from the IO memory pool that are currently in use",
+         "alias" : "IOMemUsed",
+         "datatype" : "bigint",
+         "statkey" : "IOMemUsed",
+         "units" : "bytes"
+      },
+      {
+         "units" : "percent",
+         "statkey" : "CPUMemFreePercent",
+         "alias" : "CPUMemFreePercent",
+         "datatype" : "bigint",
+         "description" : "Non utilized memory in the processor memory pool"
+      },
+      {
+         "description" : "The overall CPU busy percentage in the last 1 minute period",
+         "datatype" : "bigint",
+         "alias" : "CPUTotal1min",
+         "statkey" : "CPUTotal1min",
+         "units" : "percent"
+      },
+      {
+         "units" : "percent",
+         "statkey" : "CPUTotal5min",
+         "alias" : "CPUTotal5min",
+         "datatype" : "bigint",
+         "description" : "The overall CPU busy percentage in the last 5 minute period"
+      },
+      {
+         "units" : "bytes",
+         "statkey" : "IOMemLargestFree",
+         "alias" : "IOMemLargestFree",
+         "datatype" : "bigint",
+         "description" : "The largest number of contiguous bytes from the IO memory pool that are currently unused"
+      },
+      {
+         "units" : "bytes",
+         "statkey" : "CPUMemUsedPercent",
+         "alias" : "CPUMemUsedPercent",
+         "datatype" : "bigint",
+         "description" : "Utilization of the processor memory pool"
+      }
+   ]
+}

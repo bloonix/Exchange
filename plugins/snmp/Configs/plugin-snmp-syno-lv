@@ -1,0 +1,142 @@
+plugin {
+    id 10003
+    plugin SNMP.Syno.Lv
+    command check-snmp-syno-lv
+    datatype statistic
+    category Network,SNMP
+    netaccess yes
+    prefer localhost
+    abstract Check snmp-syno-lv
+    description Check the logical volume of a Synology NAS.
+}
+
+
+statistic {
+    statkey bytes_read
+    alias lvBytesRead
+    datatype float
+    units bytes
+    description The number of bytes read from this device
+}
+
+statistic {
+    statkey bytes_write
+    alias lvBytesWrite
+    datatype float
+    units bytes
+    description The number of bytes written to this device
+}
+
+statistic {
+    statkey iops_read
+    alias lvIoRead
+    datatype float
+    units bytes
+    description The number of read accesses from this device
+}
+
+statistic {
+    statkey iops_write
+    alias lvIoWrite
+    datatype float
+    units bytes
+    description The number of write accesses to this device
+}
+
+statistic {
+    statkey avg_read_io_size
+    alias volumeAvgIoReadSize
+    datatype float
+    units bytes
+    description The average size of Read IO
+}
+
+statistic {
+    statkey avg_write_io_size"
+    alias volumeAvgIoWriteSize
+    datatype float
+    units bytes
+    description The average size of Write IO
+}
+
+
+statistic {
+    statkey avg_load
+    alias lvAvgLoad
+    datatype bigint
+    units percent
+    description average load of lv
+}
+
+
+chart {
+    id 1
+    title SNMP syno lv - read/write rate
+    options {
+        ylabel bytes read(+) / write(-)
+        units bytes
+        chart-type area
+        series {
+            name bytes_read
+            color \#005467
+        }
+        series {
+            name bytes_write
+            color \#ff7a0d
+            opposite true
+        }
+    }
+}
+
+chart {
+    id 2
+    title SNMP syno lv - read/write IOPS
+    options {
+        ylabel iops read(+) / write(-)
+        units default
+        chart-type area
+        series {
+            name iops_read
+            color \#005467
+        }
+        series {
+            name iops_write
+            color \#ff7a0d
+            opposite true
+        }
+    }
+}
+
+chart {
+    id 3
+    title lv Load Percent
+    options {
+        ylabel percent
+        units null
+        chart-type area
+        series {
+            name avg_load
+            color \#005467
+        }
+    }
+}
+
+chart {
+    id 4
+    title SNMP syno lv - average read/write IOPS size
+    options {
+        ylabel iops size read(+) / size write(-)
+        units bytes
+        chart-type area
+        series {
+            name avg_read_io_size
+            color \#005467
+        }
+        series {
+            name avg_write_io_size
+            color \#ff7a0d
+            opposite true
+        }
+    }
+}
+

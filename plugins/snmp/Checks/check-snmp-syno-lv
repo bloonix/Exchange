@@ -1,0 +1,333 @@
+#!/usr/bin/perl
+
+=head1 NAME
+
+check-snmp-syno-lv - Plugin to check logical volume of Synology NAS by snmp.
+
+=head1 SYNOPSIS
+
+    check-snmp-syno-lv [ OPTIONS ]
+
+    check-snmp-syno-lv  --help
+
+=head1 REPORTING BUGS
+
+Please report all bugs to <support(at)bloonix.de>.
+
+=head1 AUTHOR
+
+Jonny Schulz <support(at)bloonix.de>.
+
+=head1 POWERED BY
+
+     _    __ _____ _____ __  __ __ __   __
+    | |__|  |     |     |  \|  |__|\  \/  /
+    |  . |  |  |  |  |  |      |  | >    <
+    |____|__|_____|_____|__|\__|__|/__/\__\
+
+=head1 COPYRIGHT
+
+Copyright (C) 2016 by Jonny Schulz. All rights reserved.
+
+=cut
+
+use strict;
+use warnings;
+use Bloonix::Plugin;
+use Fcntl qw(:flock :DEFAULT);
+use Net::SNMP;
+
+# --------------------------------------------------
+# Plugin options
+# --------------------------------------------------
+
+my $plugin = Bloonix::Plugin->new(version => "0.3");
+
+$plugin->example(
+    description => "Monitor the volume (1.3.6.1.4.1.6574.102) of a Synology NAS:",
+    arguments => [
+        lv => "dm-1",
+        host => "127.0.0.1",
+        port => 161,
+        community => "public",
+        "snmp-version" => 1
+    ]
+);
+
+
+$plugin->add_option(
+    name => "Logical Volume",
+    option => "lv",
+    value => "lv",
+    value_type => "string",
+    mandatory => 1,
+    description => join(" ",
+        "This is the logical volume you want to check. The lv name should",
+        "be the last digit of lvIOIndex(1.3.6.1.4.1.6574.102.1.1.X) or the string that is",
+        "found in lvIODevice (1.3.6.1.4.1.6574.102.1.1.2)."
+    )
+);
+
+$plugin->has_snmp;
+$plugin->has_debug;
+
+$plugin->has_threshold(
+    keys => [
+        { key => "bytes_read", unit => "bytes" },
+        { key => "bytes_write", unit => "bytes" },
+        { key => "iops_read", unit => "bytes" },
+        { key => "iops_write", unit => "bytes" },
+        { key => "avg_load", unit => "percent" },
+        { key => "avg_write_io_size", unit => "bytes" },
+        { key => "avg_read_io_size", unit => "bytes" }
+
+    ]
+);
+
+$plugin->add_option(
+    name => "Debug",
+    option => "debug",
+    description => "Turn on debugging. Just useful if you want to test something.",
+    command_line_only => 1
+);
+
+$plugin->add_option(
+    name => "No cache",
+    option => "no-cache",
+    description => "Do not cache SNMP results for 10 seconds.",
+    command_line_only => 1
+);
+
+# --------------------------------------------------
+# Parse options
+# --------------------------------------------------
+
+my $opt = $plugin->parse_options;
+
+# --------------------------------------------------
+# Some OIDs
+# --------------------------------------------------
+
+# Base table oids
+my $lv_name_base = "1.3.6.1.4.1.6574.102.1.1.2";
+my $lv_base      = "1.3.6.1.4.1.6574.102.1.1";
+
+# Average lv Load
+my %lv_basics = (
+    avg_load  => "1.3.6.1.4.1.6574.102.1.1.9"
+);
+
+#counters
+my %lv_counters = (
+    bytes_read      => "1.3.6.1.4.1.6574.102.1.1.12",
+    bytes_write     => "1.3.6.1.4.1.6574.102.1.1.13",
+    iops_read       => "1.3.6.1.4.1.6574.102.1.1.5",
+    iops_write      => "1.3.6.1.4.1.6574.102.1.1.6"
+);
+
+# --------------------------------------------------
+# Get cached or latest SNMP data
+# --------------------------------------------------
+
+my ($lv_result, $lv_names);
+my ($connection_string, $cache_file, $file_stat, $time, $data);
+
+$connection_string = join("_", "bloonix-check-snmp-syno-lv-cache", $opt->{host}, $opt->{community}, $opt->{port});
+$connection_string =~ s/\W/_/g;
+$cache_file = join("/", $plugin->plugin_libdir, $connection_string);
+$cache_file .= ".json";
+$file_stat = [ stat($cache_file) ];
+
+#system("cat $cache_file");
+sysopen my $fh, $cache_file, O_RDWR | O_CREAT or do {
+    $plugin->exit(
+        status => "UNKNOWN",
+        message => "unable to open file '$cache_file' - $!"
+    );
+};
+
+flock($fh, LOCK_EX);
+
+if ($file_stat->[7]) {
+    my $rest = $file_stat->[7];
+    my $offset = 0;
+    my $done = 0;
+
+    while ($rest > 0) {
+        my $len = sysread($fh, my $buf, $rest, $offset);
+
+        if (!defined $len) {
+            next if $! =~ /^Interrupted/;
+            $plugin->exit(
+                status => "UNKNOWN",
+                message => "unable to read from file '$cache_file' - $!"
+            );
+        }
+
+        $data .= $buf;
+        $rest -= $len;
+        $offset += $len;
+    }
+}
+
+if (!$opt->{no_cache} && defined $file_stat->[10] && $file_stat->[10] + 10 >= time && $data && $data =~ /^{.+}$/) {
+    $data = JSON->new->decode($data);
+    $lv_names = $data->{lv}->{names};
+    $lv_result = $data->{lv}->{result};
+    $time = $data->{time};
+} else {
+    my $snmp = $plugin->start_snmp_session;
+    $snmp->max_msg_size(65535);
+    $lv_result = $snmp->get_table($lv_base, -maxrepetitions  => 40);
+    $lv_names = $snmp->get_table($lv_name_base, -maxrepetitions  => 40);
+    $time = time;
+
+    sysseek $fh, 0, 0;
+
+    $data = JSON->new->encode({
+        time => $time,
+        lv => {
+            names => $lv_names,
+            result => $lv_result
+        }
+    });
+
+    my $rest = length $data;
+    my $offset = 0;
+
+    while ($rest) {
+        my $written = syswrite $fh, $data, $rest, $offset;
+
+        if (!defined $written) {
+            die "system write error: $!";
+        } elsif ($written) {
+            $rest -= $written;
+            $offset += $written;
+        }
+    }
+
+    truncate $fh, length $data;
+}
+
+close $fh;
+
+if (!defined $lv_result) {
+    $plugin->exit(
+        status => "CRITICAL",
+        message => "unable to get oid table from host $opt->{host}\n"
+    );
+}
+
+# --------------------------------------------------
+# Let's have a look how many lvs exists
+# --------------------------------------------------
+
+my $lv;
+my $search = $lv_names // $lv_result;
+
+foreach my $oid (keys %$search) {
+    if ($oid =~ /(\d+)\z/) {
+        my $lv_num = $1;
+
+        if ($opt->{debug}) {
+            print STDERR ">> found lv $oid -> $search->{$oid}\n";
+        }
+
+        if ($opt->{lv} =~ /^\d+\z/) {
+            if ($opt->{lv} eq $lv_num) {
+                $lv = $lv_num;
+            }
+        } elsif ($search->{$oid} eq $opt->{lv}) {
+            $lv = $lv_num;
+        }
+
+        if (defined $lv) {
+            if ($opt->{debug}) {
+                print STDERR ">> lv $search->{$oid} matched\n";
+            }
+            last;
+        }
+    }
+}
+
+if (!$lv) {
+    $plugin->exit(
+        status => "UNKNOWN",
+        message => "lv $opt->{lv} does not exists"
+    );
+}
+
+# --------------------------------------------------
+# Fetch the lv from the snmp result
+# --------------------------------------------------
+
+my $stat = { };
+
+foreach my $key (keys %lv_basics) {
+    my $oid = $lv_basics{$key};
+    if (!exists $lv_result->{"$oid.$lv"}) {
+        $plugin->exit(
+            status => "UNKOWN",
+            message => "oid $oid.$lv does not exists"
+        );
+    }
+    $stat->{$key} = $lv_result->{"$oid.$lv"};
+}
+
+my ($counters, $result);
+
+    $counters = \%lv_counters;
+    $result = $lv_result;
+
+foreach my $key (keys %$counters) {
+    my $oid = $counters->{$key};
+    if (!exists $result->{"$oid.$lv"} && $key !~ /nucast/) {
+        $plugin->exit(
+            status => "UNKOWN",
+            message => "oid $oid.$lv does not exists"
+        );
+    }
+    $stat->{$key} = $result->{"$oid.$lv"} || 0;
+}
+
+my %delta_keys = (%lv_counters);
+
+foreach my $key (keys %delta_keys) {
+    if (!exists $stat->{$key}) {
+        $stat->{$key} = 0;
+    }
+}
+
+$plugin->delta(time => $time, stat => $stat, keys => [ keys %delta_keys ]);
+
+my ($avg_read_io_size, $avg_write_io_size);
+
+if ($stat->{iops_read} == 0)
+   {
+   $avg_read_io_size = '0.00';
+   $stat->{'avg_read_io_size'} = "$avg_read_io_size";
+   }
+else
+   {
+   $avg_read_io_size = ($stat->{bytes_read} / $stat->{iops_read});
+   $avg_read_io_size = sprintf("%.2f", $avg_read_io_size);
+   $stat->{'avg_read_io_size'} = $avg_read_io_size;
+   }
+
+if ($stat->{iops_write} == 0)
+   {
+   $avg_write_io_size = '0.00';
+   $stat->{'avg_write_io_size'} = "$avg_write_io_size";
+   }
+else
+   {
+   $avg_write_io_size = ($stat->{bytes_write} / $stat->{iops_write});
+   $avg_write_io_size = sprintf("%.2f", $avg_write_io_size);
+   $stat->{'avg_write_io_size'} = $avg_write_io_size;
+   }
+
+$plugin->check_thresholds(
+    stats => $stat,
+    upshot_keys => [qw(avg_load bytes_read bytes_write)],
+    exit => "yes"
+);
