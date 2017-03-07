@@ -1,0 +1,493 @@
+#!/usr/bin/perl
+
+=head1 NAME
+
+check-snmp-cisco-fw - Plugin to check firewall stats of a cisco router.
+
+=head1 SYNOPSIS
+
+    check-snmp-cisco-fw [ OPTIONS ]
+
+    check-snmp-cisco-fw --help
+
+=head1 REPORTING BUGS
+
+Please report all bugs to <support(at)bloonix.de>.
+
+=head1 AUTHOR
+
+Jonny Schulz <support(at)bloonix.de>.
+
+=head1 POWERED BY
+
+     _    __ _____ _____ __  __ __ __   __
+    | |__|  |     |     |  \|  |__|\  \/  /
+    |  . |  |  |  |  |  |      |  | >    <
+    |____|__|_____|_____|__|\__|__|/__/\__\
+
+=head1 COPYRIGHT
+
+Copyright (C) 2016 by Jonny Schulz. All rights reserved.
+
+=cut
+
+use strict;
+use warnings;
+use Bloonix::Plugin;
+use Fcntl qw(:flock :DEFAULT);
+use Net::SNMP;
+
+# --------------------------------------------------
+# Plugin options
+# --------------------------------------------------
+
+my $plugin = Bloonix::Plugin->new(version => "0.1");
+
+$plugin->example(
+    description => "Monitor the firewall of a Cisco Router:",
+    arguments => [
+        host => "127.0.0.1",
+        port => 161,
+        community => "public",
+        "snmp-version" => 1
+    ]
+);
+
+
+$plugin->has_snmp;
+$plugin->has_debug;
+
+$plugin->has_threshold(
+    keys => [
+        { key => "GCNumAttempted" },
+        { key => "GCNumSetupsAborted" },
+        { key => "GCNumPolicyDeclined" },
+        { key => "GCNumResDeclined" },
+        { key => "GCNumHalfOpen" },
+        { key => "GCNumActive" },
+        { key => "GCNumExpired" },
+        { key => "GCNumAborted" },
+        { key => "GCNumEmbryonic" },
+        { key => "GCSetupRate1" },
+        { key => "GCSetupRate5" },
+        { key => "GCNumRemoteAccess" },
+        { key => "ICMP_NumAttempted" },
+        { key => "ICMP_NumSetupsAborted" },
+        { key => "ICMP_NumPolicyDeclined" },
+        { key => "ICMP_NumResDeclined" },
+        { key => "ICMP_NumHalfOpen" },
+        { key => "ICMP_NumActive" },
+        { key => "ICMP_NumAborted" },
+        { key => "ICMP_SetupRate1" },
+        { key => "ICMP_SetupRate5" },
+        { key => "TCP_NumAttempted" },
+        { key => "TCP_NumSetupsAborted" },
+        { key => "TCP_NumPolicyDeclined" },
+        { key => "TCP_NumResDeclined" },
+        { key => "TCP_NumHalfOpen" },
+        { key => "TCP_NumActive" },
+        { key => "TCP_NumAborted" },
+        { key => "TCP_SetupRate1" },
+        { key => "TCP_SetupRate5" },
+        { key => "UDP_NumAttempted" },
+        { key => "UDP_NumSetupsAborted" },
+        { key => "UDP_NumPolicyDeclined" },
+        { key => "UDP_NumResDeclined" },
+        { key => "UDP_NumHalfOpen" },
+        { key => "UDP_NumActive" },
+        { key => "UDP_NumAborted" },
+        { key => "UDP_SetupRate1" },
+        { key => "UDP_SetupRate5" },
+        { key => "HTTP_NumAttempted" },
+        { key => "HTTP_NumSetupsAborted" },
+        { key => "HTTP_NumPolicyDeclined" },
+        { key => "HTTP_NumResDeclined" },
+        { key => "HTTP_NumHalfOpen" },
+        { key => "HTTP_NumActive" },
+        { key => "HTTP_NumAborted" },
+        { key => "HTTP_SetupRate1" },
+        { key => "HTTP_SetupRate5" },
+        { key => "HTTPS_NumAttempted" },
+        { key => "HTTPS_NumSetupsAborted" },
+        { key => "HTTPS_NumPolicyDeclined" },
+        { key => "HTTPS_NumResDeclined" },
+        { key => "HTTPS_NumHalfOpen" },
+        { key => "HTTPS_NumActive" },
+        { key => "HTTPS_NumAborted" },
+        { key => "HTTPS_SetupRate1" },
+        { key => "HTTPS_SetupRate5" },
+        { key => "DNS_NumAttempted" },
+        { key => "DNS_NumSetupsAborted" },
+        { key => "DNS_NumPolicyDeclined" },
+        { key => "DNS_NumResDeclined" },
+        { key => "DNS_NumHalfOpen" },
+        { key => "DNS_NumActive" },
+        { key => "DNS_NumAborted" },
+        { key => "DNS_SetupRate1" },
+        { key => "DNS_SetupRate5" }
+    ]
+);
+
+
+$plugin->add_option(
+    name => "Debug",
+    option => "debug",
+    description => "Turn on debugging. Just useful if you want to test something.",
+    command_line_only => 1
+);
+
+$plugin->add_option(
+    name => "No cache",
+    option => "no-cache",
+    description => "Do not cache SNMP results for 10 seconds.",
+    command_line_only => 1
+);
+
+# --------------------------------------------------
+# Parse options
+# --------------------------------------------------
+
+my $opt = $plugin->parse_options;
+
+# --------------------------------------------------
+# Some OIDs
+# --------------------------------------------------
+
+# Base table oids
+my $fw_global_counter = "1.3.6.1.4.1.9.9.491.1.1.1";
+my $fw_layer4_counter = "1.3.6.1.4.1.9.9.491.1.1.4.1.1";
+my $fw_layer7_counter = "1.3.6.1.4.1.9.9.491.1.1.4.2.1";
+
+#More fuckin counters lol
+
+my %global_counter = (
+   GCNumAttempted      => "1.3.6.1.4.1.9.9.491.1.1.1.1.0",
+   GCNumSetupsAborted  => "1.3.6.1.4.1.9.9.491.1.1.1.2.0",
+   GCNumPolicyDeclined => "1.3.6.1.4.1.9.9.491.1.1.1.3.0",
+   GCNumResDeclined    => "1.3.6.1.4.1.9.9.491.1.1.1.4.0",
+   GCNumExpired        => "1.3.6.1.4.1.9.9.491.1.1.1.7.0",
+   GCNumAborted        => "1.3.6.1.4.1.9.9.491.1.1.1.8.0"
+);
+
+my %global_gauge = (
+   GCNumHalfOpen     => "1.3.6.1.4.1.9.9.491.1.1.1.5.0", 
+   GCNumActive       => "1.3.6.1.4.1.9.9.491.1.1.1.6.0",   
+   GCNumEmbryonic    => "1.3.6.1.4.1.9.9.491.1.1.1.9.0",
+   GCSetupRate1      => "1.3.6.1.4.1.9.9.491.1.1.1.10.0", 
+   GCSetupRate5      => "1.3.6.1.4.1.9.9.491.1.1.1.11.0", 
+   GCNumRemoteAccess => "1.3.6.1.4.1.9.9.491.1.1.1.12.0"
+);
+
+my %icmp_counter = (
+   ICMP_NumAttempted      => "1.3.6.1.4.1.9.9.491.1.1.4.1.1.2.4",
+   ICMP_NumSetupsAborted  => "1.3.6.1.4.1.9.9.491.1.1.4.1.1.3.4",
+   ICMP_NumPolicyDeclined => "1.3.6.1.4.1.9.9.491.1.1.4.1.1.4.4",
+   ICMP_NumResDeclined    => "1.3.6.1.4.1.9.9.491.1.1.4.1.1.5.4",
+   ICMP_NumAborted        => "1.3.6.1.4.1.9.9.491.1.1.4.1.1.8.4"
+
+);
+
+my %icmp_gauge = (
+   ICMP_NumHalfOpen       => "1.3.6.1.4.1.9.9.491.1.1.4.1.1.6.4",
+   ICMP_NumActive         => "1.3.6.1.4.1.9.9.491.1.1.4.1.1.7.4",
+   ICMP_SetupRate1        => "1.3.6.1.4.1.9.9.491.1.1.4.1.1.9.4",
+   ICMP_SetupRate5        => "1.3.6.1.4.1.9.9.491.1.1.4.1.1.10.4"
+);
+
+my %udp_counter = (
+   UDP_NumAttempted      => "1.3.6.1.4.1.9.9.491.1.1.4.1.1.2.6",
+   UDP_NumSetupsAborted  => "1.3.6.1.4.1.9.9.491.1.1.4.1.1.3.6",
+   UDP_NumPolicyDeclined => "1.3.6.1.4.1.9.9.491.1.1.4.1.1.4.6",
+   UDP_NumResDeclined    => "1.3.6.1.4.1.9.9.491.1.1.4.1.1.5.6",
+   UDP_NumAborted        => "1.3.6.1.4.1.9.9.491.1.1.4.1.1.8.6"
+
+);
+
+my %udp_gauge = (
+   UDP_NumHalfOpen       => "1.3.6.1.4.1.9.9.491.1.1.4.1.1.6.6",
+   UDP_NumActive         => "1.3.6.1.4.1.9.9.491.1.1.4.1.1.7.6",
+   UDP_SetupRate1        => "1.3.6.1.4.1.9.9.491.1.1.4.1.1.9.6",
+   UDP_SetupRate5        => "1.3.6.1.4.1.9.9.491.1.1.4.1.1.10.6"
+);
+
+my %tcp_counter = (
+   TCP_NumAttempted      => "1.3.6.1.4.1.9.9.491.1.1.4.1.1.2.7",
+   TCP_NumSetupsAborted  => "1.3.6.1.4.1.9.9.491.1.1.4.1.1.3.7",
+   TCP_NumPolicyDeclined => "1.3.6.1.4.1.9.9.491.1.1.4.1.1.4.7",
+   TCP_NumResDeclined    => "1.3.6.1.4.1.9.9.491.1.1.4.1.1.5.7",
+   TCP_NumAborted        => "1.3.6.1.4.1.9.9.491.1.1.4.1.1.8.7"
+
+);
+
+my %tcp_gauge = (
+   TCP_NumHalfOpen       => "1.3.6.1.4.1.9.9.491.1.1.4.1.1.6.7",
+   TCP_NumActive         => "1.3.6.1.4.1.9.9.491.1.1.4.1.1.7.7",
+   TCP_SetupRate1        => "1.3.6.1.4.1.9.9.491.1.1.4.1.1.9.7",
+   TCP_SetupRate5        => "1.3.6.1.4.1.9.9.491.1.1.4.1.1.10.7"
+);
+
+my %http_counter = (
+   HTTP_NumAttempted      => "1.3.6.1.4.1.9.9.491.1.1.4.2.1.2.6",
+   HTTP_NumSetupsAborted  => "1.3.6.1.4.1.9.9.491.1.1.4.2.1.3.6",
+   HTTP_NumPolicyDeclined => "1.3.6.1.4.1.9.9.491.1.1.4.2.1.4.6",
+   HTTP_NumResDeclined    => "1.3.6.1.4.1.9.9.491.1.1.4.2.1.5.6",
+   HTTP_NumAborted        => "1.3.6.1.4.1.9.9.491.1.1.4.2.1.8.6"
+
+);
+
+my %http_gauge = (
+   HTTP_NumHalfOpen       => "1.3.6.1.4.1.9.9.491.1.1.4.2.1.6.6",
+   HTTP_NumActive         => "1.3.6.1.4.1.9.9.491.1.1.4.2.1.7.6",
+   HTTP_SetupRate1        => "1.3.6.1.4.1.9.9.491.1.1.4.2.1.9.6",
+   HTTP_SetupRate5        => "1.3.6.1.4.1.9.9.491.1.1.4.2.1.10.6"
+);
+
+my %https_counter = (
+   HTTPS_NumAttempted      => "1.3.6.1.4.1.9.9.491.1.1.4.2.1.2.10",
+   HTTPS_NumSetupsAborted  => "1.3.6.1.4.1.9.9.491.1.1.4.2.1.3.10",
+   HTTPS_NumPolicyDeclined => "1.3.6.1.4.1.9.9.491.1.1.4.2.1.4.10",
+   HTTPS_NumResDeclined    => "1.3.6.1.4.1.9.9.491.1.1.4.2.1.5.10",
+   HTTPS_NumAborted        => "1.3.6.1.4.1.9.9.491.1.1.4.2.1.8.10"
+
+);
+
+my %https_gauge = (
+   HTTPS_NumHalfOpen       => "1.3.6.1.4.1.9.9.491.1.1.4.2.1.6.10",
+   HTTPS_NumActive         => "1.3.6.1.4.1.9.9.491.1.1.4.2.1.7.10",
+   HTTPS_SetupRate1        => "1.3.6.1.4.1.9.9.491.1.1.4.2.1.9.10",
+   HTTPS_SetupRate5        => "1.3.6.1.4.1.9.9.491.1.1.4.2.1.10.10"
+);
+
+my %dns_counter = (
+   DNS_NumAttempted      => "1.3.6.1.4.1.9.9.491.1.1.4.2.1.2.8",
+   DNS_NumSetupsAborted  => "1.3.6.1.4.1.9.9.491.1.1.4.2.1.3.8",
+   DNS_NumPolicyDeclined => "1.3.6.1.4.1.9.9.491.1.1.4.2.1.4.8",
+   DNS_NumResDeclined    => "1.3.6.1.4.1.9.9.491.1.1.4.2.1.5.8",
+   DNS_NumAborted        => "1.3.6.1.4.1.9.9.491.1.1.4.2.1.8.8"
+
+);
+
+my %dns_gauge = (
+   DNS_NumHalfOpen       => "1.3.6.1.4.1.9.9.491.1.1.4.2.1.6.8",
+   DNS_NumActive         => "1.3.6.1.4.1.9.9.491.1.1.4.2.1.7.8",
+   DNS_SetupRate1        => "1.3.6.1.4.1.9.9.491.1.1.4.2.1.9.8",
+   DNS_SetupRate5        => "1.3.6.1.4.1.9.9.491.1.1.4.2.1.10.8"
+);
+
+# --------------------------------------------------
+# Get cached or latest SNMP data
+# --------------------------------------------------
+
+my ($fw_global_counter_result, $fw_layer4_counter_result, $fw_layer7_counter_result);
+my ($connection_string, $cache_file, $file_stat, $time, $data);
+
+$connection_string = join("_", "bloonix-check-snmp-fw-cache", $opt->{host}, $opt->{community}, $opt->{port});
+$connection_string =~ s/\W/_/g;
+$cache_file = join("/", $plugin->plugin_libdir, $connection_string);
+$cache_file .= ".json";
+$file_stat = [ stat($cache_file) ];
+
+#system("cat $cache_file");
+sysopen my $fh, $cache_file, O_RDWR | O_CREAT or do {
+    $plugin->exit(
+        status => "UNKNOWN",
+        message => "unable to open file '$cache_file' - $!"
+    );
+};
+
+flock($fh, LOCK_EX);
+
+if ($file_stat->[7]) {
+    my $rest = $file_stat->[7];
+    my $offset = 0;
+    my $done = 0;
+
+    while ($rest > 0) {
+        my $len = sysread($fh, my $buf, $rest, $offset);
+
+        if (!defined $len) {
+            next if $! =~ /^Interrupted/;
+            $plugin->exit(
+                status => "UNKNOWN",
+                message => "unable to read from file '$cache_file' - $!"
+            );
+        }
+
+        $data .= $buf;
+        $rest -= $len;
+        $offset += $len;
+    }
+}
+
+if (!$opt->{no_cache} && defined $file_stat->[10] && $file_stat->[10] + 10 >= time && $data && $data =~ /^{.+}$/) {
+    $data = JSON->new->decode($data);
+    $fw_global_counter_result = $data->{fw}->{global_counter_result};
+    $fw_layer4_counter_result = $data->{fw}->{layer4_counter_result};
+    $fw_layer7_counter_result = $data->{fw}->{layer7_counter_result};
+    $time = $data->{time};
+} else {
+    my $snmp = $plugin->start_snmp_session;
+    $snmp->max_msg_size(65535);
+    $fw_global_counter_result = $snmp->get_table($fw_global_counter);
+    $fw_layer4_counter_result = $snmp->get_table($fw_layer4_counter);
+    $fw_layer7_counter_result = $snmp->get_table($fw_layer7_counter);
+    
+    $time = time;
+
+    sysseek $fh, 0, 0;
+
+    $data = JSON->new->encode({
+        time => $time,
+        fw => {
+            global_counter_result => $fw_global_counter_result,
+            layer4_counter_result => $fw_layer4_counter_result,
+            layer7_counter_result => $fw_layer7_counter_result
+        }
+    });
+
+    my $rest = length $data;
+    my $offset = 0;
+
+    while ($rest) {
+        my $written = syswrite $fh, $data, $rest, $offset;
+
+        if (!defined $written) {
+            die "system write error: $!";
+        } elsif ($written) {
+            $rest -= $written;
+            $offset += $written;
+        }
+    }
+
+    truncate $fh, length $data;
+}
+
+close $fh;
+
+if (!defined $fw_global_counter_result && !defined $fw_layer4_counter_result && !defined $fw_layer7_counter_result) {
+    $plugin->exit(
+        status => "CRITICAL",
+        message => "unable to get oid table from host $opt->{host}\n"
+    );
+}
+
+
+# --------------------------------------------------
+# Fetch the statistics from the snmp result
+# --------------------------------------------------
+
+my $stat = { };
+
+
+# --------------------------------------------------
+# Global stats
+# --------------------------------------------------
+
+
+my ($counter_global, $gauge_global, $result_global); 
+
+   $result_global = $fw_global_counter_result;
+   $counter_global = \%global_counter;
+   $gauge_global = \%global_gauge;
+   
+
+foreach my $key (keys %$counter_global, keys %$gauge_global) {
+    my $oid = $counter_global->{$key} ? $counter_global->{$key} : $gauge_global->{$key};
+    $stat->{$key} = $result_global->{"$oid"} || 0;
+}
+
+
+# --------------------------------------------------
+# Layer 4 stats
+# --------------------------------------------------
+
+
+my ($result_layer4, $counter_icmp, $gauge_icmp, $counter_udp, $gauge_udp, $counter_tcp, $gauge_tcp,); 
+
+
+   $result_layer4 = $fw_layer4_counter_result;
+   
+   $counter_icmp = \%icmp_counter;
+   $gauge_icmp = \%icmp_gauge;
+   
+
+foreach my $key (keys %$counter_icmp, keys %$gauge_icmp) {
+                my $oid = $counter_icmp->{$key} ? $counter_icmp->{$key} : $gauge_icmp->{$key};
+                $stat->{$key} = $result_layer4->{"$oid"} || 0;
+}
+
+   $counter_udp = \%udp_counter;
+   $gauge_udp = \%udp_gauge;
+   
+   
+foreach my $key (keys %$counter_udp, keys %$gauge_udp) {
+                my $oid = $counter_udp->{$key} ? $counter_udp->{$key} : $gauge_udp->{$key};
+                $stat->{$key} = $result_layer4->{"$oid"} || 0;
+}
+
+   $counter_tcp = \%tcp_counter;
+   $gauge_tcp = \%tcp_gauge;
+   
+foreach my $key (keys %$counter_tcp, keys %$gauge_tcp) {
+                my $oid = $counter_tcp->{$key} ? $counter_tcp->{$key} : $gauge_tcp->{$key};
+                $stat->{$key} = $result_layer4->{"$oid"} || 0;
+}
+
+# --------------------------------------------------
+# Layer 7 stats
+# --------------------------------------------------
+
+my ($result_layer7, $counter_http, $gauge_http, $counter_https, $gauge_https, $counter_dns, $gauge_dns,); 
+
+
+   $result_layer7 = $fw_layer7_counter_result;
+   
+   $counter_http = \%http_counter;
+   $gauge_http = \%http_gauge;
+   
+
+foreach my $key (keys %$counter_http, keys %$gauge_http) {
+                my $oid = $counter_http->{$key} ? $counter_http->{$key} : $gauge_http->{$key};
+                $stat->{$key} = $result_layer7->{"$oid"} || 0;
+}
+
+   $counter_https = \%https_counter;
+   $gauge_https = \%https_gauge;
+   
+   
+foreach my $key (keys %$counter_https, keys %$gauge_https) {
+                my $oid = $counter_https->{$key} ? $counter_https->{$key} : $gauge_https->{$key};
+                $stat->{$key} = $result_layer7->{"$oid"} || 0;
+}
+
+   $counter_dns = \%dns_counter;
+   $gauge_dns = \%dns_gauge;
+   
+foreach my $key (keys %$counter_dns, keys %$gauge_dns) {
+                my $oid = $counter_dns->{$key} ? $counter_dns->{$key} : $gauge_dns->{$key};
+                $stat->{$key} = $result_layer7->{"$oid"} || 0;
+}
+
+my %delta_keys = (%global_counter, %icmp_counter, %udp_counter, %tcp_counter, %http_counter, %https_counter, %dns_counter);
+
+foreach my $key (keys %delta_keys) {
+    if (!exists $stat->{$key}) {
+        $stat->{$key} = 0;
+    }
+}
+
+$plugin->delta(time => $time, stat => $stat, keys => [ keys %delta_keys ]);
+
+
+  
+
+# --------------------------------------------------
+# Check thresholds
+# --------------------------------------------------
+
+
+$plugin->check_thresholds(
+    stats => $stat,
+    upshot_keys => [qw(GCNumActive GCNumHalfOpen GCSetupRate1)],
+    exit => "yes"
+);

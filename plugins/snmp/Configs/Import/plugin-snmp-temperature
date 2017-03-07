@@ -1,0 +1,220 @@
+{
+   "plugin" : {
+      "description" : "Check the Temperature of a Device by OID.",
+      "id" : "10001",
+      "info" : {
+         "options" : [
+            {
+               "mandatory" : 0,
+               "name" : "Hostname or IP address",
+               "description" : "A hostname or IP address to connect to.",
+               "default" : "127.0.0.1",
+               "multiple" : 0,
+               "value_type" : "string",
+               "option" : "host",
+               "value_desc" : "hostname or ip address"
+            },
+            {
+               "mandatory" : 0,
+               "name" : "Port number",
+               "description" : "A port number to connect to.",
+               "default" : 161,
+               "multiple" : 0,
+               "value_type" : "int",
+               "option" : "port",
+               "value_desc" : "port"
+            },
+            {
+               "mandatory" : 0,
+               "name" : "SNMP community",
+               "description" : "The SNMP community to connect to the host.",
+               "default" : "public",
+               "option" : "community",
+               "value_type" : "string",
+               "multiple" : 0,
+               "value_desc" : "community"
+            },
+            {
+               "mandatory" : 0,
+               "name" : "SNMP version",
+               "description" : "The SNMP version to use to connect to the host.",
+               "default" : 2,
+               "multiple" : 0,
+               "option" : "snmp-version",
+               "value_type" : "string",
+               "value_desc" : "version"
+            },
+            {
+               "value_desc" : "username",
+               "multiple" : 0,
+               "option" : "username",
+               "value_type" : "string",
+               "default" : null,
+               "description" : "The SNMPv3 username.",
+               "name" : "SNMPv3 username",
+               "mandatory" : 0
+            },
+            {
+               "description" : "The SNMPv3 auth key.",
+               "default" : null,
+               "name" : "SNMPv3 auth key",
+               "mandatory" : 0,
+               "value_desc" : "authkey",
+               "option" : "authkey",
+               "value_type" : "string",
+               "multiple" : 0
+            },
+            {
+               "description" : "The SNMPv3 auth password.",
+               "default" : null,
+               "name" : "SNMPv3 auth password",
+               "mandatory" : 0,
+               "value_desc" : "authpassword",
+               "multiple" : 0,
+               "option" : "authpassword",
+               "value_type" : "string"
+            },
+            {
+               "mandatory" : 0,
+               "name" : "SNMPv3 auth protocol",
+               "description" : "The SNMPv3 auth protocol.",
+               "default" : null,
+               "multiple" : 0,
+               "value_type" : "string",
+               "option" : "authprotocol",
+               "value_desc" : "authprotocol"
+            },
+            {
+               "mandatory" : 0,
+               "description" : "The SNMPv3 priv key.",
+               "default" : null,
+               "name" : "SNMPv3 priv key",
+               "value_type" : "string",
+               "option" : "privkey",
+               "multiple" : 0,
+               "value_desc" : "privkey"
+            },
+            {
+               "mandatory" : 0,
+               "name" : "SNMPv3 priv password",
+               "description" : "The SNMPv3 priv password.",
+               "default" : null,
+               "value_type" : "string",
+               "option" : "privpassword",
+               "multiple" : 0,
+               "value_desc" : "privpassword"
+            },
+            {
+               "value_desc" : "privprotocol",
+               "option" : "privprotocol",
+               "value_type" : "string",
+               "multiple" : 0,
+               "default" : null,
+               "description" : "The SNMPv3 priv protocol.",
+               "name" : "SNMPv3 priv protocol",
+               "mandatory" : 0
+            },
+            {
+               "description" : "The OID to check.",
+               "default" : "",
+               "name" : "The OID to check",
+               "mandatory" : 1,
+               "value_desc" : "string",
+               "option" : "oid",
+               "value_type" : "string",
+               "multiple" : 0
+            },
+            {
+               "default" : null,
+               "description" : "This is the warning threshold. When the value exceeds the threshold a warning status is triggered. Please see the examples for more information.",
+               "name" : "Warning threshold",
+               "mandatory" : 0,
+               "value_desc" : "key:value or key:op:value",
+               "option" : "warning",
+               "value_type" : "string",
+               "multiple" : 1
+            },
+            {
+               "default" : null,
+               "description" : "This is the critical threshold. When the value exceeds the threshold a critical status is triggered. Please see the examples for more information.",
+               "name" : "Critical threshold",
+               "mandatory" : 0,
+               "value_desc" : "key:value or key:op:value",
+               "option" : "critical",
+               "value_type" : "string",
+               "multiple" : 1
+            }
+         ],
+         "flags" : "",
+         "examples" : [
+            {
+               "description" : [
+                  "Example to check if a system is alive:"
+               ],
+               "command_line" : "check-snmp-temperature --host '127.0.0.1' --port '161' --community 'public' --oid '1.3.6.1.2.1.1.5.0'",
+               "arguments" : [
+                  "host",
+                  "127.0.0.1",
+                  "port",
+                  161,
+                  "community",
+                  "public",
+                  "oid",
+                  "1.3.6.1.2.1.1.5.0"
+               ]
+            }
+         ],
+         "version" : "0.1",
+         "thresholds" : {
+            "info" : [
+               "How to set warning and critical thresholds:\n\n",
+               "  It's possible to set thresholds for one or more statistic keys.\n",
+               "  The format to add a threshold for a statistic key is:\n\n",
+               "    key:operator:threshold\n\n",
+               "  If no operator is set then the default operator is 'ge'.\n\n",
+               "  The following operators are available:\n\n",
+               "    lt = less than\n",
+               "    le = less than or equal\n",
+               "    gt = greater than\n",
+               "    ge = greater than or equal\n",
+               "    eq = equal\n",
+               "    ne = not equal\n"
+            ],
+            "options" : [
+               {
+                  "key" : "temperature",
+                  "unit" : "none"
+               }
+            ]
+         },
+         "plugin" : "check-snmp-temperature"
+      },
+      "datatype" : "statistic",
+      "plugin" : "SNMP.Check.Temperature",
+      "command" : "check-snmp-temperature",
+      "netaccess" : "yes",
+      "abstract" : "SNMP Temperature check by OID",
+      "category" : "System,SNMP",
+      "prefer" : "localhost"
+   },
+   "chart" : {
+      "title" : "Temperature",
+      "id" : "1",
+      "options" : {
+         "chart-type" : "area",
+         "units" : "null",
+         "ylabel" : "celsius",
+         "series" : {
+            "name" : "temperature",
+            "color" : "#005467"
+         }
+      }
+   },
+   "statistic" : {
+      "description" : "The temperatur of the sensor.",
+      "datatype" : "float",
+      "statkey" : "temperature",
+      "alias" : "Temperature",
+      "units" : "temperature"
+   }
+}

@@ -1,0 +1,256 @@
+plugin {
+    id 10009
+    plugin SNMP.QOS.RMON
+    command check-snmp-rmon
+    datatype statistic
+    category Network,SNMP
+    netaccess yes
+    prefer localhost
+    abstract Check snmp-qos-rmon
+    description Monitor the rmon stats of a interface on a switch
+}
+
+
+statistic {
+    statkey DropEvents
+    alias DropEvents
+    datatype float
+    units default
+    description The total number of events in which packets were dropped by the probe due to lack of resources
+}
+
+statistic {
+    statkey Octets
+    alias Octets
+    datatype float
+    units bytes
+    description The total number of octets of data
+}
+
+statistic {
+    statkey Pkts
+    alias Pkts
+    datatype float
+    units default
+    description The total number of packets received
+}
+
+statistic {
+    statkey BroadcastPkts
+    alias BroadcastPkts
+    datatype float
+    units default
+    description The total number of good packets received that were directed to the broadcast address
+}
+
+statistic {
+    statkey MulticastPkts
+    alias MulticastPkts
+    datatype float
+    units default
+    description The total number of good packets received that were directed to a multicast address
+}
+
+statistic {
+    statkey CRCAlignErrors
+    alias CRCAlignErrors
+    datatype float
+    units default
+    description The total number of packets received that had a bad FCS
+}
+
+statistic {
+    statkey UndersizePkts
+    alias UndersizePkts
+    datatype float
+    units default
+    description The total number of packets received that were less than 64 octets long
+}
+
+statistic {
+    statkey OversizePkts
+    alias OversizePkts
+    datatype float
+    units default
+    description The total number of packets received that were longer than 1518 octets
+}
+
+statistic {
+    statkey Fragments
+    alias Fragments
+    datatype float
+    units default
+    description The total number of packets received that were less than 64 octets in length
+}
+
+statistic {
+    statkey Jabbers
+    alias Jabbers
+    datatype float
+    units default
+    description The total number of packets received that were longer than 1518 octets
+}
+
+statistic {
+    statkey Collisions
+    alias Collisions
+    datatype float
+    units default
+    description The best estimate of the total number of collisions on this Ethernet segment
+}
+
+statistic {
+    statkey Pkts64Octets
+    alias Pkts64Octets
+    datatype float
+    units default
+    description The total number of packets received that were 64 octets in length
+}
+
+statistic {
+    statkey Pkts65to127Octets
+    alias Pkts65to127Octets
+    datatype float
+    units default
+    description The total number of packets received that were between 65 and 127 octets in length
+}
+
+statistic {
+    statkey Pkts128to255Octets
+    alias Pkts128to255Octets
+    datatype float
+    units default
+    description The total number of packets received that were between 128 and 255 octets in length
+}
+
+statistic {
+    statkey Pkts256to511Octets
+    alias Pkts256to511Octets
+    datatype float
+    units default
+    description The total number of packets received that were between 256 and 511 octets in length
+}
+
+statistic {
+    statkey Pkts512to1023Octets
+    alias Pkts512to1023Octets
+    datatype float
+    units default
+    description The total number of packets received that were between 512 and 1023 octets in length
+}
+
+statistic {
+    statkey Pkts1024to1518Octets
+    alias Pkts1024to1518Octets
+    datatype float
+    units default
+    description The total number of packets received that were between 1024 and 1518 octets in length
+}
+
+
+chart {
+    id 1
+    title SNMP RMON Interface Bytes"
+    options {
+        ylabel bytes/s
+        units bytes
+        chart-type area
+        series {
+            name Octets
+            color \#005467
+        }
+    }
+}
+
+chart {
+    id 2
+    title SNMP RMON Interface Pakets"
+    options {
+        ylabel packets/s
+        units default
+        chart-type line
+        series {
+            name Pkts
+            color \#005467
+        }
+        series {
+            name BroadcastPkts
+            color \#ffb244
+        }
+        series {
+            name MulticastPkts
+            color \#2ba743
+        }
+    }
+}
+
+chart {
+    id 3
+    title SNMP RMON Interface Pakets Errors"
+    options {
+        ylabel packets/s
+        units default
+        chart-type area
+        series {
+            name CRCAlignErrors
+            color \#005467
+        }
+        series {
+            name UndersizePkts
+            color \#ffb244
+        }
+        series {
+            name OversizePkts
+            color \#2ba743
+        }
+        series {
+            name Fragments
+            color \#ff7a0d
+        }
+        series {
+            name Jabbers
+            color \#e9644a
+        }
+        series {
+            name Collisions
+            color \#9a72ad
+        }
+    }
+}
+
+chart {
+    id 4
+    title SNMP RMON Interface Pakets sizes"
+    options {
+        ylabel packets/s
+        units default
+        chart-type line
+        series {
+            name Pkts64Octets
+            color \#005467
+        }
+        series {
+            name Pkts65to127Octets
+            color \#ffb244
+        }
+        series {
+            name Pkts128to255Octets
+            color \#2ba743
+        }
+        series {
+            name Pkts256to511Octets
+            color \#ff7a0d
+            opposite true
+        }
+        series {
+            name Pkts512to1023Octets
+            color \#e9644a
+            opposite true
+        }
+        series {
+            name Pkts1024to1518Octets
+            color \#9a72ad
+            opposite true
+        }
+    }
+}

@@ -1,0 +1,352 @@
+plugin {
+    id 10006
+    plugin SNMP.QOS.QUEUE
+    command check-snmp-qos-queue
+    datatype statistic
+    category Network,SNMP
+    netaccess yes
+    prefer localhost
+    abstract Check snmp-qos-queue
+    description Monitor the Egress QoS queue of interface of a Cisco Switch
+}
+
+
+statistic {
+    statkey q1_w1_enqueue
+    alias q1_w1_enqueue
+    datatype float
+    units default
+    description Enqueued packets in queue 1 with weight 1
+}
+
+statistic {
+    statkey q1_w2_enqueue
+    alias q1_w2_enqueue
+    datatype float
+    units default
+    description Enqueued packets in queue 1 with weight 2
+}
+
+statistic {
+    statkey q1_w3_enqueue
+    alias q1_w3_enqueue
+    datatype float
+    units default
+    description Enqueued packets in queue 1 with weight 3
+}
+
+statistic {
+    statkey q2_w1_enqueue
+    alias q2_w1_enqueue
+    datatype float
+    units default
+    description Enqueued packets in queue 2 with weight 1
+}
+
+statistic {
+    statkey q2_w2_enqueue
+    alias q2_w2_enqueue
+    datatype float
+    units default
+    description Enqueued packets in queue 2 with weight 2
+}
+
+statistic {
+    statkey q2_w3_enqueue
+    alias q2_w3_enqueue
+    datatype float
+    units default
+    description Enqueued packets in queue 2 with weight 3
+}
+
+statistic {
+    statkey q3_w1_enqueue
+    alias q3_w1_enqueue
+    datatype float
+    units default
+    description Enqueued packets in queue 3 with weight 1
+}
+
+statistic {
+    statkey q3_w2_enqueue
+    alias q3_w2_enqueue
+    datatype float
+    units default
+    description Enqueued packets in queue 3 with weight 2
+}
+
+statistic {
+    statkey q3_w3_enqueue
+    alias q3_w3_enqueue
+    datatype float
+    units default
+    description Enqueued packets in queue 3 with weight 3
+}
+
+statistic {
+    statkey q4_w1_enqueue
+    alias q4_w1_enqueue
+    datatype float
+    units default
+    description Enqueued packets in queue 3 with weight 1
+}
+
+statistic {
+    statkey q4_w2_enqueue
+    alias q4_w2_enqueue
+    datatype float
+    units default
+    description Enqueued packets in queue 3 with weight 2
+}
+
+statistic {
+    statkey q4_w3_enqueue
+    alias q4_w3_enqueue
+    datatype float
+    units default
+    description Enqueued packets in queue 3 with weight 3
+}
+
+statistic {
+    statkey q1_w1_drop
+    alias q1_w1_drop
+    datatype float
+    units bytes
+    description Dropped packets in queue 1 with weight 1
+}
+
+statistic {
+    statkey q1_w2_drop
+    alias q1_w2_drop
+    datatype float
+    units bytes
+    description Dropped packets in queue 1 with weight 2
+}
+
+statistic {
+    statkey q1_w3_drop
+    alias q1_w3_drop
+    datatype float
+    units bytes
+    description Dropped packets in queue 1 with weight 3
+}
+
+statistic {
+    statkey q2_w1_drop
+    alias q2_w1_drop
+    datatype float
+    units bytes
+    description Dropped packets in queue 2 with weight 1
+}
+
+statistic {
+    statkey q2_w2_drop
+    alias q2_w2_drop
+    datatype float
+    units bytes
+    description Dropped packets in queue 2 with weight 2
+}
+
+statistic {
+    statkey q2_w3_drop
+    alias q2_w3_drop
+    datatype float
+    units bytes
+    description Dropped packets in queue 2 with weight 3
+}
+
+statistic {
+    statkey q3_w1_drop
+    alias q3_w1_drop
+    datatype float
+    units bytes
+    description Dropped packets in queue 3 with weight 1
+}
+
+statistic {
+    statkey q3_w2_drop
+    alias q3_w2_drop
+    datatype float
+    units bytes
+    description Dropped packets in queue 3 with weight 2
+}
+
+statistic {
+    statkey q3_w3_drop
+    alias q3_w3_drop
+    datatype float
+    units bytes
+    description Dropped packets in queue 3 with weight 3
+}
+
+statistic {
+    statkey q4_w1_drop
+    alias q4_w1_drop
+    datatype float
+    units bytes
+    description Dropped packets in queue 3 with weight 1
+}
+
+statistic {
+    statkey q4_w2_drop
+    alias q4_w2_drop
+    datatype float
+    units bytes
+    description Dropped packets in queue 3 with weight 2
+}
+
+statistic {
+    statkey q4_w3_drop
+    alias q4_w3_drop
+    datatype float
+    units bytes
+    description Dropped packets in queue 3 with weight 3
+}
+
+chart {
+    id 1
+    title SNMP QOS QUEUE 1 - enqueue/drop packets"
+    options {
+        ylabel packets drop(-)  / enqueue(+)
+        units default
+        chart-type area
+        series {
+            name q1_w1_enqueue
+            color \#005467
+        }
+        series {
+            name q1_w2_enqueue
+            color \#ffb244
+        }
+        series {
+            name q1_w3_enqueue
+            color \#2ba743
+        }
+        series {
+            name q1_w1_drop
+            color \#ff7a0d
+            opposite true
+        }
+        series {
+            name q1_w2_drop
+            color \#e9644a
+            opposite true
+        }
+        series {
+            name q1_w3_drop
+            color \#9a72ad
+            opposite true
+        }
+    }
+}
+
+chart {
+    id 2
+    title SNMP QOS QUEUE 1 - enqueue/drop packets"
+    options {
+        ylabel packets drop(-)  / enqueue(+)
+        units default
+        chart-type area
+        series {
+            name q2_w1_enqueue
+            color \#005467
+        }
+        series {
+            name q2_w2_enqueue
+            color \#ffb244
+        }
+        series {
+            name q2_w3_enqueue
+            color \#2ba743
+        }
+        series {
+            name q2_w1_drop
+            color \#ff7a0d
+            opposite true
+        }
+        series {
+            name q2_w2_drop
+            color \#e9644a
+            opposite true
+        }
+        series {
+            name q2_w3_drop
+            color \#9a72ad
+            opposite true
+        }
+    }
+}
+
+chart {
+    id 3
+    title SNMP QOS QUEUE 3 - enqueue/drop packets"
+    options {
+        ylabel packets drop(-)  / enqueue(+)
+        units default
+        chart-type area
+        series {
+            name q3_w1_enqueue
+            color \#005467
+        }
+        series {
+            name q3_w2_enqueue
+            color \#ffb244
+        }
+        series {
+            name q3_w3_enqueue
+            color \#2ba743
+        }
+        series {
+            name q3_w1_drop
+            color \#ff7a0d
+            opposite true
+        }
+        series {
+            name q3_w2_drop
+            color \#e9644a
+            opposite true
+        }
+        series {
+            name q3_w3_drop
+            color \#9a72ad
+            opposite true
+        }
+    }
+}
+
+chart {
+    id 4
+    title SNMP QOS QUEUE 4 - enqueue/drop packets"
+    options {
+        ylabel packets drop(-)  / enqueue(+)
+        units default
+        chart-type area
+        series {
+            name q4_w1_enqueue
+            color \#005467
+        }
+        series {
+            name q4_w2_enqueue
+            color \#ffb244
+        }
+        series {
+            name q4_w3_enqueue
+            color \#2ba743
+        }
+        series {
+            name q4_w1_drop
+            color \#ff7a0d
+            opposite true
+        }
+        series {
+            name q4_w2_drop
+            color \#e9644a
+            opposite true
+        }
+        series {
+            name q4_w3_drop
+            color \#9a72ad
+            opposite true
+        }
+    }
+}

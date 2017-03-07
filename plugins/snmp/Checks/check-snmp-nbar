@@ -1,0 +1,377 @@
+#!/usr/bin/perl
+
+=head1 NAME
+
+check-snmp-nbar - Plugin to check protocol statistics of an interfaces by snmp.
+
+=head1 SYNOPSIS
+
+    check-snmp-nbar [ OPTIONS ]
+
+    check-snmp-nbar --help
+
+=head1 REPORTING BUGS
+
+Please report all bugs to <support(at)bloonix.de>.
+
+=head1 AUTHOR
+
+Jonny Schulz <support(at)bloonix.de>.
+
+=head1 POWERED BY
+
+     _    __ _____ _____ __  __ __ __   __
+    | |__|  |     |     |  \|  |__|\  \/  /
+    |  . |  |  |  |  |  |      |  | >    <
+    |____|__|_____|_____|__|\__|__|/__/\__\
+
+=head1 COPYRIGHT
+
+Copyright (C) 2016 by Jonny Schulz. All rights reserved.
+
+=cut
+
+use strict;
+use warnings;
+use Bloonix::Plugin;
+use Fcntl qw(:flock :DEFAULT);
+use Net::SNMP;
+
+# --------------------------------------------------
+# Plugin options
+# --------------------------------------------------
+
+my $plugin = Bloonix::Plugin->new(version => "0.3");
+
+
+$plugin->example(
+    description => "Monitor http protocol stats on the interface 10 (1.3.6.1.2.1.2.2.1.2.10) of a cisco router:",
+    arguments => [
+        interface => 10,
+		protocol => "http",
+        host => "127.0.0.1",
+        port => 161,
+        community => "public",
+        "snmp-version" => 1
+    ]
+);
+
+$plugin->add_option(
+    name => "Network interface",
+    option => "interface",
+    value => "interface",
+    value_type => "string",
+    mandatory => 1,
+    description => join(" ",
+        "This is the network interface you want to check. The interface name should",
+        "be the last digit of ifDescr (1.3.6.1.2.1.2.2.1.2.X) or the string that is",
+        "found in ifName (1.3.6.1.2.1.31.1.1.1.1)."
+    )
+);
+
+$plugin->add_option(
+    name => "Protocol Name",
+    option => "protocol",
+    value => "protocol",
+    value_type => "string",
+    mandatory => 1,
+    description => join(" ",
+	    "This is the protocol you want to check. For Example http",
+		"You may also use the protocol id from a snmpwalk on",
+		"1.3.6.1.4.1.9.9.244.1.8.1.1.2"
+    )
+);
+
+$plugin->has_snmp;
+$plugin->has_debug;
+
+$plugin->has_threshold(
+    keys => [
+        { key => "in_proto_octets", unit => "bytes" },
+        { key => "in_proto_pkts", unit => "bytes" },
+        { key => "out_proto_octets", unit => "bytes" },
+        { key => "out_proto_pkts", unit => "bytes" }
+    ]
+);
+
+
+$plugin->add_option(
+    name => "Debug",
+    option => "debug",
+    description => "Turn on debugging. Just useful if you want to test something.",
+    command_line_only => 1
+);
+
+$plugin->add_option(
+    name => "No cache",
+    option => "no-cache",
+    description => "Do not cache SNMP results for 10 seconds.",
+    command_line_only => 1
+);
+
+# --------------------------------------------------
+# Parse options
+# --------------------------------------------------
+
+my $opt = $plugin->parse_options;
+
+# --------------------------------------------------
+# Some OIDs
+# --------------------------------------------------
+
+# Base table oids
+my $if_name_base            = "1.3.6.1.2.1.31.1.1.1.1";
+my $protocol_name_base      = "1.3.6.1.4.1.9.9.244.1.8.1.1.2";
+my $protocol_counter_ip     = "1.3.6.1.4.1.9.9.244.1.2.1.1.7";
+my $protocol_counter_op     = "1.3.6.1.4.1.9.9.244.1.2.1.1.8";
+my $protocol_counter_io     = "1.3.6.1.4.1.9.9.244.1.2.1.1.9";
+my $protocol_counter_oo     = "1.3.6.1.4.1.9.9.244.1.2.1.1.10";
+
+my %nb_counter_ip = (in_proto_pkts => "1.3.6.1.4.1.9.9.244.1.2.1.1.7");
+my %nb_counter_op = (out_proto_pkts => "1.3.6.1.4.1.9.9.244.1.2.1.1.8");
+my %nb_counter_io = (in_proto_octets  => "1.3.6.1.4.1.9.9.244.1.2.1.1.9");
+my %nb_counter_oo = (out_proto_octets => "1.3.6.1.4.1.9.9.244.1.2.1.1.10");
+
+# --------------------------------------------------
+# Get cached or latest SNMP data
+# --------------------------------------------------
+
+my ($protocol_result, $protocol_counter_ip_result, $protocol_counter_op_result, $protocol_counter_io_result, $protocol_counter_oo_result, $if_names);
+my ($connection_string, $cache_file, $file_stat, $time, $data);
+
+$connection_string = join("_", "bloonix-check-nbar-cache", $opt->{host}, $opt->{community}, $opt->{port});
+$connection_string =~ s/\W/_/g;
+$cache_file = join("/", $plugin->plugin_libdir, $connection_string);
+$cache_file .= ".json";
+$file_stat = [ stat($cache_file) ];
+
+#system("cat $cache_file");
+sysopen my $fh, $cache_file, O_RDWR | O_CREAT or do {
+    $plugin->exit(
+        status => "UNKNOWN",
+        message => "unable to open file '$cache_file' - $!"
+    );
+};
+
+flock($fh, LOCK_EX);
+
+if ($file_stat->[7]) {
+    my $rest = $file_stat->[7];
+    my $offset = 0;
+    my $done = 0;
+
+    while ($rest > 0) {
+        my $len = sysread($fh, my $buf, $rest, $offset);
+
+        if (!defined $len) {
+            next if $! =~ /^Interrupted/;
+            $plugin->exit(
+                status => "UNKNOWN",
+                message => "unable to read from file '$cache_file' - $!"
+            );
+        }
+
+        $data .= $buf;
+        $rest -= $len;
+        $offset += $len;
+    }
+}
+
+if (!$opt->{no_cache} && defined $file_stat->[10] && $file_stat->[10] + 10 >= time && $data && $data =~ /^{.+}$/) {
+    $data = JSON->new->decode($data);
+    $if_names = $data->{nbar}->{names};
+    $protocol_result = $data->{nbar}->{result};
+    $protocol_counter_ip_result = $data->{nbar}->{ip_result};
+    $protocol_counter_op_result = $data->{nbar}->{op_result};
+    $protocol_counter_io_result = $data->{nbar}->{io_result};
+    $protocol_counter_oo_result = $data->{nbar}->{oo_result};
+    $time = $data->{time};
+} else {
+    my $snmp = $plugin->start_snmp_session;
+    $snmp->max_msg_size(65535);
+    $protocol_result = $snmp->get_table($protocol_name_base);
+    $if_names = $snmp->get_table($if_name_base);
+    $protocol_counter_ip_result = $snmp->get_table($protocol_counter_ip);
+    $protocol_counter_op_result = $snmp->get_table($protocol_counter_op);
+    $protocol_counter_io_result = $snmp->get_table($protocol_counter_io);
+    $protocol_counter_oo_result = $snmp->get_table($protocol_counter_oo);
+    
+    $time = time;
+
+    sysseek $fh, 0, 0;
+
+    $data = JSON->new->encode({
+        time => $time,
+        nbar => {
+            names => $if_names,
+            result => $protocol_result,
+            ip_result => $protocol_counter_ip_result,
+            op_result => $protocol_counter_op_result,
+            io_result => $protocol_counter_io_result,
+            oo_result => $protocol_counter_oo_result,
+        }
+    });
+
+    my $rest = length $data;
+    my $offset = 0;
+
+    while ($rest) {
+        my $written = syswrite $fh, $data, $rest, $offset;
+
+        if (!defined $written) {
+            die "system write error: $!";
+        } elsif ($written) {
+            $rest -= $written;
+            $offset += $written;
+        }
+    }
+
+    truncate $fh, length $data;
+}
+
+close $fh;
+
+if (!defined $protocol_counter_ip_result && $protocol_counter_op_result && $protocol_counter_io_result && $protocol_counter_oo_result) {
+    $plugin->exit(
+        status => "CRITICAL",
+        message => "unable to get oid table from host $opt->{host}"
+    );
+}
+
+# --------------------------------------------------
+# Let's have a look how many interfaces exists
+# --------------------------------------------------
+
+my $if;
+my $protocol;
+
+my $search_if = $if_names;
+my $search_protocol = $protocol_result;
+
+foreach my $oid (keys %$search_if) {
+    if ($oid =~ /(\d+)\z/) {
+        my $if_num = $1;
+
+        if ($opt->{debug}) {
+            print STDERR ">> found interface $oid -> $search_if->{$oid}\n";
+        }
+
+        if ($opt->{interface} =~ /^\d+\z/) {
+            if ($opt->{interface} eq $if_num) {
+                $if = $if_num;
+            }
+        } elsif ($search_if->{$oid} eq $opt->{interface}) {
+            $if = $if_num;
+        }
+
+        if (defined $if) {
+            if ($opt->{debug}) {
+                print STDERR ">> interface $search_if->{$oid} matched\n";
+            }
+            last;
+        }
+    }
+}
+
+if (!$if) {
+    $plugin->exit(
+        status => "UNKNOWN",
+        message => "interface $opt->{interface} does not exists"
+    );
+}
+
+foreach my $oid (keys %$search_protocol) {
+    if ($oid =~ /(\d+)\z/) {
+        my $protocol_num = $1;
+
+        if ($opt->{debug}) {
+            print STDERR ">> found protocol $oid -> $search_protocol->{$oid}\n";
+        }
+
+        if ($opt->{protocol} =~ /^\d+\z/) {
+            if ($opt->{protocol} eq $protocol_num) {
+                $protocol = $protocol_num;
+            }
+        } elsif ($search_protocol->{$oid} eq $opt->{protocol}) {
+            $protocol = $protocol_num;
+        }
+
+        if (defined $protocol) {
+            if ($opt->{debug}) {
+                print STDERR ">> protocol $search_protocol->{$oid} matched\n";
+            }
+            last;
+        }
+    }
+}
+
+if (!$protocol) {
+    $plugin->exit(
+        status => "UNKNOWN",
+        message => "protocol $opt->{protocol} does not exists"
+    );
+}
+
+# --------------------------------------------------
+# Fetch the statistics from the snmp result
+# --------------------------------------------------
+
+my $stat = { };
+
+my ($counters_ip, $counters_op, $counters_io, $counters_oo, $result_ip, $result_op, $result_io, $result_oo);
+
+
+    $counters_ip = \%nb_counter_ip;
+    $counters_op = \%nb_counter_op;
+    $counters_io = \%nb_counter_io;
+    $counters_oo = \%nb_counter_oo;
+    
+    $result_ip = $protocol_counter_ip_result;
+    $result_op = $protocol_counter_op_result;
+    $result_io = $protocol_counter_io_result;
+    $result_oo = $protocol_counter_oo_result;
+
+
+foreach my $key (keys %$counters_ip) {
+    my $oid = $counters_ip->{$key};
+    $stat->{$key} = $result_ip->{"$oid.$if.$protocol"} || 0;
+}
+
+foreach my $key (keys %$counters_op) {
+    my $oid = $counters_op->{$key};
+    $stat->{$key} = $result_op->{"$oid.$if.$protocol"} || 0;
+}
+
+foreach my $key (keys %$counters_io) {
+    my $oid = $counters_io->{$key};
+    $stat->{$key} = $result_io->{"$oid.$if.$protocol"} || 0;
+}
+
+foreach my $key (keys %$counters_oo) {
+    my $oid = $counters_oo->{$key};
+    $stat->{$key} = $result_oo->{"$oid.$if.$protocol"} || 0;
+}
+
+my %delta_keys = (%nb_counter_ip, %nb_counter_op, %nb_counter_io, %nb_counter_oo);
+
+foreach my $key (keys %delta_keys) {
+    if (!exists $stat->{$key}) {
+        $stat->{$key} = 0;
+    }
+}
+
+$plugin->delta(time => $time, stat => $stat, keys => [ keys %delta_keys ]);
+
+
+# --------------------------------------------------
+# Check thresholds
+# --------------------------------------------------
+
+
+
+$plugin->check_thresholds(
+    stats => $stat,
+    upshot_keys => [qw(in_proto_octets out_proto_octets in_proto_pkts out_proto_pkts)],
+    exit => "yes"
+);
+

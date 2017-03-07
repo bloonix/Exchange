@@ -1,0 +1,288 @@
+plugin {
+    id 10011
+    plugin SNMP.CISCO.IOS.SysStats
+    command check-snmp-cisco-ios-system-stats
+    datatype statistic
+    category Network,SNMP
+    netaccess yes
+    prefer localhost
+    abstract Check snmp-cisco-ios-system-stats
+    description Monitor CPU and memory statistics of a Cisco IOS device
+}
+
+
+statistic {
+    statkey CPUInterrupt
+    alias CPUInterrupt
+    datatype bigint
+    units percent
+    description The overall CPU busy percentage in the interrupt context in the last 5 second period
+}
+
+statistic {
+    statkey IOMemFreePercent
+    alias IOMemFreePercent
+    datatype bigint
+    units percent
+    description Free memory of the IO pool in percent
+}
+
+statistic {
+    statkey IOMemTotal
+    alias IOMemTotal
+    datatype bigint
+    units bytes
+    description Non utilized memory in the IO memory pool
+}
+
+statistic {
+    statkey CPUTotal5sec
+    alias CPUTotal5sec
+    datatype bigint
+    units percent
+    description The overall CPU busy percentage in the last 5 second period
+}
+
+statistic {
+    statkey CPUMemTotal
+    alias CPUMemTotal
+    datatype bigint
+    units bytes
+    description Total memory available in the processor pool
+}
+
+statistic {
+    statkey IOMemFree
+    alias IOMemFree
+    datatype bigint
+    units bytes
+    description The number of bytes from the IO memory pool that are currently unused
+}
+
+statistic {
+    statkey CPUMemFree
+    alias CPUMemFree
+    datatype bigint
+    units bytes
+    description The number of bytes from the processor memory pool that are currently unused
+}
+
+statistic {
+    statkey IOMemUsedPercent
+    alias IOMemUsedPercent
+    datatype bigint
+    units percent
+    description Utilization of the IO memory pool
+}
+
+statistic {
+    statkey CPUMemLargestFree
+    alias CPUMemLargestFree
+    datatype bigint
+    units bytes
+    description The largest number of contiguous bytes from the processor memory pool that are currently unused
+}
+
+statistic {
+    statkey CPUMemUsed
+    alias CPUMemUsed
+    datatype bigint
+    units bytes
+    description The number of bytes from the processor memory pool that are currently in use
+}
+
+statistic {
+    statkey IOMemUsed
+    alias IOMemUsed
+    datatype bigint
+    units bytes
+    description The number of bytes from the IO memory pool that are currently in use
+}
+
+statistic {
+    statkey CPUMemFreePercent
+    alias CPUMemFreePercent
+    datatype bigint
+    units percent
+    description Non utilized memory in the processor memory pool
+}
+
+statistic {
+    statkey CPUTotal1min
+    alias CPUTotal1min
+    datatype bigint
+    units percent
+    description The overall CPU busy percentage in the last 1 minute period
+}
+
+statistic {
+    statkey CPUTotal5min
+    alias CPUTotal5min
+    datatype bigint
+    units percent
+    description The overall CPU busy percentage in the last 5 minute period
+}
+
+statistic {
+    statkey IOMemLargestFree
+    alias IOMemLargestFree"
+    datatype bigint
+    units bytes
+    description The largest number of contiguous bytes from the IO memory pool that are currently unused
+}
+
+statistic {
+    statkey CPUMemUsedPercent
+    alias CPUMemUsedPercent
+    datatype bigint
+    units bytes
+    description Utilization of the processor memory pool
+}
+
+chart {
+    id 1
+    title CPU Load
+    options {
+        ylabel percent
+        units percent
+        chart-type line
+        series {
+            name CPUTotal5sec
+            color \#005467
+        }
+        series {
+            name CPUTotal1min
+            color \#ffb244
+        }
+        series {
+            name CPUTotal5min
+            color \#2ba743
+        }
+    }
+}
+
+chart {
+    id 2
+    title CPU avg 5sec - and interrupt load
+    options {
+        ylabel percent
+        units percent
+        chart-type line
+        series {
+            name CPUTotal5sec
+            color \#005467
+        }
+        series {
+            name CPUInterrupt
+            color \#ffb244
+        }
+    }
+}
+
+chart {
+    id 3
+    title IO Memory Pool Utilization
+    options {
+        ylabel percent
+        units percent
+        chart-type area
+        series {
+            name IOMemFreePercent
+            color \#005467
+        }
+        series {
+            name IOMemUsedPercent
+            color \#ffb244
+        }
+    }
+}
+
+chart {
+    id 4
+    title Processor Memory Pool Utilization
+    options {
+        ylabel percent
+        units percent
+        chart-type area
+        series {
+            name CPUMemFreePercent
+            color \#005467
+        }
+        series {
+            name CPUMemUsedPercent
+            color \#ffb244
+        }
+    }
+}
+
+chart {
+    id 5
+    title IO Memory Pool Usage
+    options {
+        ylabel bytes
+        units bytes
+        chart-type area
+        series {
+            name IOMemFree
+            color \#005467
+        }
+        series {
+            name IOMemUsed
+            color \#ffb244
+        }
+    }
+}
+
+chart {
+    id 6
+    title Processor Memory Pool Usage
+    options {
+        ylabel bytes
+        units bytes
+        chart-type area
+        series {
+            name CPUMemFree
+            color \#005467
+        }
+        series {
+            name CPUMemUsed
+            color \#ffb244
+        }
+    }
+}
+
+chart {
+    id 7
+    title Largest number of free contiguous bytes
+    options {
+        ylabel bytes
+        units bytes
+        chart-type area
+        series {
+            name IOMemLargestFree
+            color \#005467
+        }
+        series {
+            name CPUMemLargestFree
+            color \#ffb244
+        }
+    }
+}
+
+chart {
+    id 8
+    title Total number of used bytes by memory pools
+    options {
+        ylabel bytes
+        units bytes
+        chart-type area
+        series {
+            name IOMemTotal
+            color \#005467
+        }
+        series {
+            name CPUMemTotal
+            color \#ffb244
+        }
+    }
+}

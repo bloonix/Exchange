@@ -1,0 +1,33 @@
+plugin {
+    id 10001
+    plugin SNMP.Check.Temperature
+    command check-snmp-temperature
+    datatype statistic
+    category System,SNMP
+    netaccess yes
+    prefer localhost
+    abstract SNMP Temperature check by OID
+    description Check the Temperature of a Device by OID.
+}
+statistic {
+    statkey temperature
+    alias Temperature
+    datatype float
+    units temperature
+    description The temperatur of the sensor.
+}
+
+chart {
+    id 1
+    title Temperature
+    options {
+        ylabel celsius
+        units null
+        chart-type area
+        series {
+            name temperature
+            color \#005467
+        }
+    }
+}
+

@@ -1,0 +1,124 @@
+plugin {
+    id 10002
+    plugin SNMP.Syno.Disk
+    command check-snmp-syno-disk
+    datatype statistic
+    category Network,SNMP
+    netaccess yes
+    prefer localhost
+    abstract Check snmp-syno-disk
+    description Check the disk of a Synology NAS.
+}
+
+
+statistic {
+    statkey bytes_read
+    alias diskBytesRead
+    datatype float
+    units bytes
+    description The number of bytes read from this device
+}
+
+statistic {
+    statkey bytes_write
+    alias diskBytesWrite
+    datatype float
+    units bytes
+    description The number of bytes written to this device
+}
+
+statistic {
+    statkey iops_read
+    alias diskIoRead
+    datatype float
+    units bytes
+    description The number of read accesses from this device
+}
+
+statistic {
+    statkey iops_write
+    alias diskIoWrite
+    datatype float
+    units bytes
+    description The number of write accesses to this device
+}
+
+statistic {
+    statkey avg_load
+    alias diskAvgLoad
+    datatype bigint
+    units percent
+    description average load of disk
+}
+
+statistic {
+    statkey avg_read_io_size
+    alias diskAvgReadIoSize
+    datatype float
+    units bytes
+    description The number of bytes read from this device
+}
+
+statistic {
+    statkey avg_write_io_size
+    alias diskAvgWriteIoSize
+    datatype float
+    units bytes
+    description The number of bytes written to this device
+}
+
+
+
+chart {
+    id 1
+    title SNMP syno disk - read/write rate
+    options {
+        ylabel bytes read(+) / write(-)
+        units bytes
+        chart-type area
+        series {
+            name bytes_read
+            color \#005467
+        }
+        series {
+            name bytes_write
+            color \#ff7a0d
+            opposite true
+        }
+    }
+}
+
+chart {
+    id 2
+    title SNMP syno disk - read/write IOPS
+    options {
+        ylabel iops read(+) / write(-)
+        units default
+        chart-type area
+        series {
+            name iops_read
+            color \#005467
+        }
+        series {
+            name iops_write
+            color \#ff7a0d
+            opposite true
+        }
+    }
+}
+
+chart {
+    id 3
+    title Disk Load Percent
+    options {
+        ylabel percent
+        units null
+        chart-type area
+        series {
+            name avg_load
+            color \#005467
+        }
+    }
+}
+
+
